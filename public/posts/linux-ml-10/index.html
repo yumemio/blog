@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Linux はじめの一歩 | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
+阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
+藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
+藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
+（）
+h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
+例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
+$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
+（最後のファイルが気になる…）
+Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. ">
+    <meta name="generator" content="Hugo 0.105.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Linux はじめの一歩" />
+<meta property="og:description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
+阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
+藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
+藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
+（）
+h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
+例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
+$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
+（最後のファイルが気になる…）
+Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. " />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://example.org/posts/linux-ml-10/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-23T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-11-23T00:00:00+00:00" />
+
+<meta itemprop="name" content="Linux はじめの一歩">
+<meta itemprop="description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
+阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
+藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
+藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
+（）
+h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
+例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
+$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
+（最後のファイルが気になる…）
+Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. "><meta itemprop="datePublished" content="2022-11-23T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2022-11-23T00:00:00+00:00" />
+<meta itemprop="wordCount" content="66">
+<meta itemprop="keywords" content="linux," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux はじめの一歩"/>
+<meta name="twitter:description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
+阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
+藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
+藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
+（）
+h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
+例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
+$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
+（最後のファイルが気になる…）
+Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. "/>
+
+	
+  </head>
+
+  <body class="ma0 serif bg-white DEV">
+
+    
+   
+  <header>
+  <div class="pb3-m">
+    <h1 class="f2 fw10 ma3 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link">
+        yumem.io
+      </a>
+    </h1>
+    <nav class="bg-navy" role="navigation">
+  <div class="mw9 ph5-l flex-l justify-between center">
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f3-ns fw3 dib ph4">
+            <a class="hover-white no-underline white-90" href="/about/" title="About page">
+              ABOUT
+            </a>
+          </li>
+          
+          <li class="list f3-ns fw3 dib ph4">
+            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
+              POSTS
+            </a>
+          </li>
+          
+        </ul>
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="http://example.org/categories/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 serif mt3 mb1">Linux はじめの一歩</h1>
+      
+      
+      <time class="mt2 mb4 dib tracked" datetime="2022-11-23T00:00:00Z">November 23, 2022</time>
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links black pr4-l w-two-thirds-l"><h2 id="登場人物紹介">登場人物紹介</h2>
+<p><img src="/images/imagenet_sunset.png" alt="sudo">
+須藤（すどう）くん：とある大学の理学部3年生。
+ロボティクスと</p>
+<p><img src="/images/imagenet_sunset.png" alt="achi">
+阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。
+音声合成に関心があり、…。
+研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。</p>
+<p><img src="/images/imagenet_sunset.png" alt="fujinoya">
+藤野屋（ふじのや）教授：大学で…を教えている。
+Linux の扱いはお手の物。</p>
+<h2 id="藤野屋研究室にて">藤野屋研究室にて</h2>
+<p><img src="/images/imagenet_sunset.png" alt="sudo"> （…先生から渡された課題、難しいなぁ…。）</p>
+<p><img src="/images/imagenet_sunset.png" alt="sudo"></p>
+<p><img src="/images/imagenet_sunset.png" alt="sudo"> （）</p>
+<h2 id="h2">h2</h2>
+<h3 id="h3">h3</h3>
+<h4 id="h4">h4</h4>
+<hr>
+<h3 id="find---ファイルを検索する"><code>find</code> - ファイルを検索する</h3>
+<p><img src="/images/imagenet_sunset.png" alt="sunset">
+ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。</p>
+<p>例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ find . -type f
+</span></span><span class="line"><span class="cl">./iphone/DSC0001.JPG
+</span></span><span class="line"><span class="cl">./iphone/DSC0002.JPG
+</span></span><span class="line"><span class="cl">./iphone/DSC0003.JPG
+</span></span><span class="line"><span class="cl">./iphone/DSC0004.JPG
+</span></span><span class="line"><span class="cl">./secret/renlin/seiga-4bd74c016e.jpg
+</span></span></code></pre></div><p>のようにすればいい。</p>
+<p><img src="/images/imagenet_sunset.png" alt="sunset"> （最後のファイルが気になる…）</p>
+<ul>
+<li><a href="https://jekyllrb.com/docs/home">Jekyll docs</a>: more info on how to get the most out of Jekyll.</li>
+<li><a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>: File all bugs/feature requests.</li>
+<li>If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</li>
+</ul>
+<ul class="pa0">
+  
+   <li class="list di">
+     <a href="/tags/linux/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">linux</a>
+   </li>
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-navy bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://example.org/" >
+    &copy;  yumem.io 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
+  </div>
+</footer>
+
+  </body>
+</html>

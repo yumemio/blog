@@ -1,0 +1,61 @@
+baseURL: 'https://yumem.io/'
+languageCode: 'ja-jp'
+defaultContentLanguage: 'ja'
+copyright: 'Yuki Sasaki'
+title: 'yumem.io'
+theme: "ananke"
+SectionPagesMenu: "main"
+Paginate: 2
+
+# Disable categories and tags
+taxonomies:
+  series: series
+
+languages:
+  ja:
+    Paginate: 15
+    menu:
+      main:
+      - identifier: series
+        name: "連載"
+        url: /series/
+        weight: 0
+
+markup:
+  highlight:
+    codeFences: true
+    guessSyntax: false
+    hl_Lines: ""
+    lineNoStart: 1
+    lineNos: false
+    lineNumbersInTable: true
+    noClasses: false
+    style: monokai  # looks like this has no effect, only imported CSS matters
+    tabWidth: 4
+
+params:
+  text_color: "black"
+  text_secondary_color: "gray"
+  author: "yumemio"
+  favicon: ""
+  site_logo: ""
+  license_page_url: "/about"
+  description: "AIとGIS技術の習得を目指す人々のためのブログ。初心者から上級者まで、わかりやすいチュートリアルと最新の情報を提供します。"
+  recent_posts_number: 3
+  custom_css:
+    - css/custom.css
+    - css/syntax-monokai.css
+  body_classes: "serif bg-white"
+  background_color_class: "bg-navy"
+  hasCJKLanguage: True
+  ananke_socials:
+  - name: github
+    url: https://github.com/yumemio
+  - name: stackoverflow
+    url: https://stackoverflow.com/users/13301046/yumemio
+  - name: facebook
+    label: Facebook
+    follow: false
+  - name: twitter
+    label: Twitter
+    follow: false

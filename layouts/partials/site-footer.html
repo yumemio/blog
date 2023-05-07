@@ -1,0 +1,25 @@
+{{/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Bud Parr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/}}
+<footer class="{{ .Site.Params.background_color_class | default "bg-black" }}
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy; {{ with .Site.Copyright | default .Site.Title }} {{ . | safeHTML }} {{ end }} {{ now.Format "2006"}}.
+      <a class="hover-white white-70" href="">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="{{ .Site.Params.license_page_url
+          }}">More about license...</a>
+    </div>
+    <div>
+      {{ partial "social-follow.html" . }}
+    </div>
+  </div>
+</footer>

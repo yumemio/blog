@@ -1,0 +1,9 @@
+#header-logo {
+    height: 80px;
+    width: auto;
+}
+
+#content h2 {
+    padding-top: .5rem;
+    border-bottom: solid 1px #333;
+}

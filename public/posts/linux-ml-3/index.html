@@ -1,0 +1,510 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Hello Linux!: ターミナル、lsコマンド、pwdコマンド | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第3回です。
+ターミナル コマンドラインを用いた Linux の操作に欠かせないのが、「ターミナル」だ。
+ターミナルは、コマンドを入力してコンピュータを操作できるアプリケーション だ。 Windows や Mac OS の GUI からファイルを表示・編集したりインターネットにアクセスできるのと同様に、 ターミナルからもファイルやフォルダの管理、メールの送受信など、様々な作業ができる。
+🌴コラム: ターミナルの語源 テキストベースでコンピュータを操作するソフトウェアが「ターミナル」と呼ばれているのには、歴史的な背景がある。
+文字入力だけでコンピュータを操作するCLIは、少なくとも1960年代にさかのぼる。 これは、GUIを搭載したコンピュータが登場する20年以上前のことだ。 現代の私たちはそれぞれ PC やスマートフォンを所有できるが、初期のコンピュータは高価で大型だったので、個人が1台ずつ使うのではなく、大きなコンピュータを組織ごとに1台（あるいは数台）買ってみんなで共有する、という使い方が一般的だった。
+このときに登場したのが、「ターミナル（端末）」とよばれる機械だ。 物理的な機械としてのターミナルは、次の写真のような形をしている。
+（Author: Jason Scott, CC-BY, from Wikimedia Commons）
+ターミナルはディスプレイとキーボードを備えたデバイスで、現代のパソコンと同じような見た目をしているが、計算やファイル処理の機能はない。 実際の計算や処理をしているのは大きいマシン（メインフレーム）のほうで、ターミナルはユーザがタイプした内容をメインフレームに送信したり、メインフレームの計算結果を画面に表示したりする、いわば入出力の役割だけを担う。 そのぶんターミナルは安いので、企業や大学では1台のメインフレームに多数のターミナルを接続して、複数のユーザが同時に作業できるようにしていた。
+つまり、各ユーザがメインフレームにアクセスするための端末（ターミナル）として機能するので、「ターミナル」という名前がついたわけだ。
+その後の技術発展によってコンピュータ自体が安くなり、1人1台のコンピュータが持てる時代になった。 このため、メインフレームにターミナルをいくつも接続する、という使い方はあまり見られなくなった。 しかし、CLIでコンピュータを操作する環境を「ターミナル」と呼ぶ習慣は残り続けた。
+そういうわけで、CLI 環境を提供するアプリは今でも「ターミナル」と呼ばれている。
+それでは早速 Linux マシンを起動して、ターミナルを開いてみよう。ここでは Ubuntu を例に説明する。 手元に Linux 環境がない場合は、前回の記事 を参照して、Ubuntu の仮想マシンを作ってほしい。
+Ubuntu の場合、画面の左下にある アイコンをクリックして、アプリランチャーを開いて&hellip;
+「端末」と検索すると、ターミナルが出てくる。
+「端末」アプリを起動すると、次のようにほとんど真っ黒な画面が表示されるはずだ（環境によっては白い背景に黒文字など、色合いが異なる場合もある）。
+まずは、この画面から見ていこう。
+プロンプト 開いた画面をよく見ると、左上になにか文字が表示されていると思う。 私の Ubuntu 環境では、このように表示される。
+yumemio@vanilla:~$ 表示される文字は環境によって異なるが、ほとんどの場合、最後がドル記号（$）かシャープ（#）で終わっているはずだ。
+この文字は、「ユーザが入力するのを待っている」という状態を表している。 ユーザの行動を促す（prompt）という意味で、この文字を「プロンプト」という。
+プロンプトには、ユーザ名やLinuxマシンの名前などの情報がコンパクトに表示されている。 たとえば、例として挙げたプロンプトからは次のことがわかる:">
+    <meta name="generator" content="Hugo 0.105.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Hello Linux!: ターミナル、lsコマンド、pwdコマンド" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第3回です。
+ターミナル コマンドラインを用いた Linux の操作に欠かせないのが、「ターミナル」だ。
+ターミナルは、コマンドを入力してコンピュータを操作できるアプリケーション だ。 Windows や Mac OS の GUI からファイルを表示・編集したりインターネットにアクセスできるのと同様に、 ターミナルからもファイルやフォルダの管理、メールの送受信など、様々な作業ができる。
+🌴コラム: ターミナルの語源 テキストベースでコンピュータを操作するソフトウェアが「ターミナル」と呼ばれているのには、歴史的な背景がある。
+文字入力だけでコンピュータを操作するCLIは、少なくとも1960年代にさかのぼる。 これは、GUIを搭載したコンピュータが登場する20年以上前のことだ。 現代の私たちはそれぞれ PC やスマートフォンを所有できるが、初期のコンピュータは高価で大型だったので、個人が1台ずつ使うのではなく、大きなコンピュータを組織ごとに1台（あるいは数台）買ってみんなで共有する、という使い方が一般的だった。
+このときに登場したのが、「ターミナル（端末）」とよばれる機械だ。 物理的な機械としてのターミナルは、次の写真のような形をしている。
+（Author: Jason Scott, CC-BY, from Wikimedia Commons）
+ターミナルはディスプレイとキーボードを備えたデバイスで、現代のパソコンと同じような見た目をしているが、計算やファイル処理の機能はない。 実際の計算や処理をしているのは大きいマシン（メインフレーム）のほうで、ターミナルはユーザがタイプした内容をメインフレームに送信したり、メインフレームの計算結果を画面に表示したりする、いわば入出力の役割だけを担う。 そのぶんターミナルは安いので、企業や大学では1台のメインフレームに多数のターミナルを接続して、複数のユーザが同時に作業できるようにしていた。
+つまり、各ユーザがメインフレームにアクセスするための端末（ターミナル）として機能するので、「ターミナル」という名前がついたわけだ。
+その後の技術発展によってコンピュータ自体が安くなり、1人1台のコンピュータが持てる時代になった。 このため、メインフレームにターミナルをいくつも接続する、という使い方はあまり見られなくなった。 しかし、CLIでコンピュータを操作する環境を「ターミナル」と呼ぶ習慣は残り続けた。
+そういうわけで、CLI 環境を提供するアプリは今でも「ターミナル」と呼ばれている。
+それでは早速 Linux マシンを起動して、ターミナルを開いてみよう。ここでは Ubuntu を例に説明する。 手元に Linux 環境がない場合は、前回の記事 を参照して、Ubuntu の仮想マシンを作ってほしい。
+Ubuntu の場合、画面の左下にある アイコンをクリックして、アプリランチャーを開いて&hellip;
+「端末」と検索すると、ターミナルが出てくる。
+「端末」アプリを起動すると、次のようにほとんど真っ黒な画面が表示されるはずだ（環境によっては白い背景に黒文字など、色合いが異なる場合もある）。
+まずは、この画面から見ていこう。
+プロンプト 開いた画面をよく見ると、左上になにか文字が表示されていると思う。 私の Ubuntu 環境では、このように表示される。
+yumemio@vanilla:~$ 表示される文字は環境によって異なるが、ほとんどの場合、最後がドル記号（$）かシャープ（#）で終わっているはずだ。
+この文字は、「ユーザが入力するのを待っている」という状態を表している。 ユーザの行動を促す（prompt）という意味で、この文字を「プロンプト」という。
+プロンプトには、ユーザ名やLinuxマシンの名前などの情報がコンパクトに表示されている。 たとえば、例として挙げたプロンプトからは次のことがわかる:" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-3/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-05-07T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="Hello Linux!: ターミナル、lsコマンド、pwdコマンド">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第3回です。
+ターミナル コマンドラインを用いた Linux の操作に欠かせないのが、「ターミナル」だ。
+ターミナルは、コマンドを入力してコンピュータを操作できるアプリケーション だ。 Windows や Mac OS の GUI からファイルを表示・編集したりインターネットにアクセスできるのと同様に、 ターミナルからもファイルやフォルダの管理、メールの送受信など、様々な作業ができる。
+🌴コラム: ターミナルの語源 テキストベースでコンピュータを操作するソフトウェアが「ターミナル」と呼ばれているのには、歴史的な背景がある。
+文字入力だけでコンピュータを操作するCLIは、少なくとも1960年代にさかのぼる。 これは、GUIを搭載したコンピュータが登場する20年以上前のことだ。 現代の私たちはそれぞれ PC やスマートフォンを所有できるが、初期のコンピュータは高価で大型だったので、個人が1台ずつ使うのではなく、大きなコンピュータを組織ごとに1台（あるいは数台）買ってみんなで共有する、という使い方が一般的だった。
+このときに登場したのが、「ターミナル（端末）」とよばれる機械だ。 物理的な機械としてのターミナルは、次の写真のような形をしている。
+（Author: Jason Scott, CC-BY, from Wikimedia Commons）
+ターミナルはディスプレイとキーボードを備えたデバイスで、現代のパソコンと同じような見た目をしているが、計算やファイル処理の機能はない。 実際の計算や処理をしているのは大きいマシン（メインフレーム）のほうで、ターミナルはユーザがタイプした内容をメインフレームに送信したり、メインフレームの計算結果を画面に表示したりする、いわば入出力の役割だけを担う。 そのぶんターミナルは安いので、企業や大学では1台のメインフレームに多数のターミナルを接続して、複数のユーザが同時に作業できるようにしていた。
+つまり、各ユーザがメインフレームにアクセスするための端末（ターミナル）として機能するので、「ターミナル」という名前がついたわけだ。
+その後の技術発展によってコンピュータ自体が安くなり、1人1台のコンピュータが持てる時代になった。 このため、メインフレームにターミナルをいくつも接続する、という使い方はあまり見られなくなった。 しかし、CLIでコンピュータを操作する環境を「ターミナル」と呼ぶ習慣は残り続けた。
+そういうわけで、CLI 環境を提供するアプリは今でも「ターミナル」と呼ばれている。
+それでは早速 Linux マシンを起動して、ターミナルを開いてみよう。ここでは Ubuntu を例に説明する。 手元に Linux 環境がない場合は、前回の記事 を参照して、Ubuntu の仮想マシンを作ってほしい。
+Ubuntu の場合、画面の左下にある アイコンをクリックして、アプリランチャーを開いて&hellip;
+「端末」と検索すると、ターミナルが出てくる。
+「端末」アプリを起動すると、次のようにほとんど真っ黒な画面が表示されるはずだ（環境によっては白い背景に黒文字など、色合いが異なる場合もある）。
+まずは、この画面から見ていこう。
+プロンプト 開いた画面をよく見ると、左上になにか文字が表示されていると思う。 私の Ubuntu 環境では、このように表示される。
+yumemio@vanilla:~$ 表示される文字は環境によって異なるが、ほとんどの場合、最後がドル記号（$）かシャープ（#）で終わっているはずだ。
+この文字は、「ユーザが入力するのを待っている」という状態を表している。 ユーザの行動を促す（prompt）という意味で、この文字を「プロンプト」という。
+プロンプトには、ユーザ名やLinuxマシンの名前などの情報がコンパクトに表示されている。 たとえば、例として挙げたプロンプトからは次のことがわかる:"><meta itemprop="datePublished" content="2023-05-07T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-05-07T00:00:00+00:00" />
+<meta itemprop="wordCount" content="294">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Hello Linux!: ターミナル、lsコマンド、pwdコマンド"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第3回です。
+ターミナル コマンドラインを用いた Linux の操作に欠かせないのが、「ターミナル」だ。
+ターミナルは、コマンドを入力してコンピュータを操作できるアプリケーション だ。 Windows や Mac OS の GUI からファイルを表示・編集したりインターネットにアクセスできるのと同様に、 ターミナルからもファイルやフォルダの管理、メールの送受信など、様々な作業ができる。
+🌴コラム: ターミナルの語源 テキストベースでコンピュータを操作するソフトウェアが「ターミナル」と呼ばれているのには、歴史的な背景がある。
+文字入力だけでコンピュータを操作するCLIは、少なくとも1960年代にさかのぼる。 これは、GUIを搭載したコンピュータが登場する20年以上前のことだ。 現代の私たちはそれぞれ PC やスマートフォンを所有できるが、初期のコンピュータは高価で大型だったので、個人が1台ずつ使うのではなく、大きなコンピュータを組織ごとに1台（あるいは数台）買ってみんなで共有する、という使い方が一般的だった。
+このときに登場したのが、「ターミナル（端末）」とよばれる機械だ。 物理的な機械としてのターミナルは、次の写真のような形をしている。
+（Author: Jason Scott, CC-BY, from Wikimedia Commons）
+ターミナルはディスプレイとキーボードを備えたデバイスで、現代のパソコンと同じような見た目をしているが、計算やファイル処理の機能はない。 実際の計算や処理をしているのは大きいマシン（メインフレーム）のほうで、ターミナルはユーザがタイプした内容をメインフレームに送信したり、メインフレームの計算結果を画面に表示したりする、いわば入出力の役割だけを担う。 そのぶんターミナルは安いので、企業や大学では1台のメインフレームに多数のターミナルを接続して、複数のユーザが同時に作業できるようにしていた。
+つまり、各ユーザがメインフレームにアクセスするための端末（ターミナル）として機能するので、「ターミナル」という名前がついたわけだ。
+その後の技術発展によってコンピュータ自体が安くなり、1人1台のコンピュータが持てる時代になった。 このため、メインフレームにターミナルをいくつも接続する、という使い方はあまり見られなくなった。 しかし、CLIでコンピュータを操作する環境を「ターミナル」と呼ぶ習慣は残り続けた。
+そういうわけで、CLI 環境を提供するアプリは今でも「ターミナル」と呼ばれている。
+それでは早速 Linux マシンを起動して、ターミナルを開いてみよう。ここでは Ubuntu を例に説明する。 手元に Linux 環境がない場合は、前回の記事 を参照して、Ubuntu の仮想マシンを作ってほしい。
+Ubuntu の場合、画面の左下にある アイコンをクリックして、アプリランチャーを開いて&hellip;
+「端末」と検索すると、ターミナルが出てくる。
+「端末」アプリを起動すると、次のようにほとんど真っ黒な画面が表示されるはずだ（環境によっては白い背景に黒文字など、色合いが異なる場合もある）。
+まずは、この画面から見ていこう。
+プロンプト 開いた画面をよく見ると、左上になにか文字が表示されていると思う。 私の Ubuntu 環境では、このように表示される。
+yumemio@vanilla:~$ 表示される文字は環境によって異なるが、ほとんどの場合、最後がドル記号（$）かシャープ（#）で終わっているはずだ。
+この文字は、「ユーザが入力するのを待っている」という状態を表している。 ユーザの行動を促す（prompt）という意味で、この文字を「プロンプト」という。
+プロンプトには、ユーザ名やLinuxマシンの名前などの情報がコンパクトに表示されている。 たとえば、例として挙げたプロンプトからは次のことがわかる:"/>
+
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white DEV">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">Hello Linux!: ターミナル、lsコマンド、pwdコマンド</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-05-07T00:00:00Z">
+        
+        2023年5月7日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-3/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-3/&amp;text=Hello%20Linux!:%20%e3%82%bf%e3%83%bc%e3%83%9f%e3%83%8a%e3%83%ab%e3%80%81ls%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%80%81pwd%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第3回です。</p>
+<h2 id="ターミナル">ターミナル</h2>
+<p>コマンドラインを用いた Linux の操作に欠かせないのが、「<strong>ターミナル</strong>」だ。</p>
+<p>ターミナルは、<strong>コマンドを入力してコンピュータを操作できるアプリケーション</strong> だ。
+Windows や Mac OS の GUI からファイルを表示・編集したりインターネットにアクセスできるのと同様に、
+ターミナルからもファイルやフォルダの管理、メールの送受信など、様々な作業ができる。</p>
+<blockquote>
+<h3 id="コラム-ターミナルの語源">🌴コラム: ターミナルの語源</h3>
+<p>テキストベースでコンピュータを操作するソフトウェアが「ターミナル」と呼ばれているのには、歴史的な背景がある。</p>
+<p>文字入力だけでコンピュータを操作する<strong>CLI</strong>は、少なくとも1960年代にさかのぼる。
+これは、GUIを搭載したコンピュータが登場する20年以上前のことだ。
+現代の私たちはそれぞれ PC やスマートフォンを所有できるが、初期のコンピュータは高価で大型だったので、個人が1台ずつ使うのではなく、大きなコンピュータを組織ごとに1台（あるいは数台）買ってみんなで共有する、という使い方が一般的だった。</p>
+<p>このときに登場したのが、「<strong>ターミナル（端末）</strong>」とよばれる機械だ。
+物理的な機械としてのターミナルは、次の写真のような形をしている。</p>
+<p><img src="/images/lmle/3-ls/DEC_VT100_terminal_cc-by_Jason_Scott.jpg" alt="VT100ターミナル (Author: Jason Scott)"></p>
+<p>（Author: Jason Scott, CC-BY, from <a href="https://en.wikipedia.org/wiki/File:DEC_VT100_terminal.jpg">Wikimedia Commons</a>）</p>
+<p>ターミナルはディスプレイとキーボードを備えたデバイスで、現代のパソコンと同じような見た目をしているが、計算やファイル処理の機能はない。
+実際の計算や処理をしているのは大きいマシン（<strong>メインフレーム</strong>）のほうで、ターミナルはユーザがタイプした内容をメインフレームに送信したり、メインフレームの計算結果を画面に表示したりする、いわば入出力の役割だけを担う。
+そのぶんターミナルは安いので、企業や大学では1台のメインフレームに多数のターミナルを接続して、複数のユーザが同時に作業できるようにしていた。</p>
+<p>つまり、各ユーザがメインフレームにアクセスするための端末（ターミナル）として機能するので、「ターミナル」という名前がついたわけだ。</p>
+<p>その後の技術発展によってコンピュータ自体が安くなり、1人1台のコンピュータが持てる時代になった。
+このため、メインフレームにターミナルをいくつも接続する、という使い方はあまり見られなくなった。
+しかし、CLIでコンピュータを操作する環境を「ターミナル」と呼ぶ習慣は残り続けた。</p>
+<p>そういうわけで、CLI 環境を提供するアプリは今でも「ターミナル」と呼ばれている。</p>
+</blockquote>
+<p>それでは早速 Linux マシンを起動して、ターミナルを開いてみよう。ここでは Ubuntu を例に説明する。
+手元に Linux 環境がない場合は、<a href="/posts/linux-ml-2">前回の記事</a> を参照して、Ubuntu の仮想マシンを作ってほしい。</p>
+<p>Ubuntu の場合、画面の左下にある <img src="/images/lmle/3-ls/ubuntu-apps-launcher-icon.png" alt="3個x3個の点"> アイコンをクリックして、アプリランチャーを開いて&hellip;</p>
+<p><img src="/images/lmle/3-ls/ubuntu-desktop-apps-launcher.png" alt="デスクトップ右下の「アプリランチャー」アイコン"></p>
+<p>「端末」と検索すると、ターミナルが出てくる。</p>
+<p><img src="/images/lmle/3-ls/ubuntu-apps-terminal.png" alt="アプリランチャーで「端末」を検索した画面"></p>
+<p>「端末」アプリを起動すると、次のようにほとんど真っ黒な画面が表示されるはずだ（環境によっては白い背景に黒文字など、色合いが異なる場合もある）。</p>
+<p><img src="/images/lmle/3-ls/ubuntu-terminal.png" alt="Ubuntu ターミナルの画面"></p>
+<p>まずは、この画面から見ていこう。</p>
+<h2 id="プロンプト">プロンプト</h2>
+<p>開いた画面をよく見ると、左上になにか文字が表示されていると思う。
+私の Ubuntu 環境では、このように表示される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">yumemio@vanilla:~$ 
+</span></span></code></pre></div><p>表示される文字は環境によって異なるが、ほとんどの場合、最後がドル記号（<code>$</code>）かシャープ（<code>#</code>）で終わっているはずだ。</p>
+<p>この文字は、「ユーザが入力するのを待っている」という状態を表している。
+ユーザの行動を促す（prompt）という意味で、この文字を「<strong>プロンプト</strong>」という。</p>
+<p>プロンプトには、ユーザ名やLinuxマシンの名前などの情報がコンパクトに表示されている。
+たとえば、例として挙げたプロンプトからは次のことがわかる:</p>
+<ul>
+<li>ユーザ名は <code>yumemio</code></li>
+<li>Linux マシンの名前（ホスト名）は <code>vanilla</code></li>
+<li>いま開いているフォルダは「<code>~</code>（ホームディレクトリ）」</li>
+</ul>
+<p>ターミナルの基本的な使い方は、Windows の「メモ帳」や Mac の「テキストエディット」のようなテキストエディタと少し似ている。</p>
+<ol>
+<li>文字を入力すると、打った文字が表示される。</li>
+<li>左右の矢印キーでカーソルを動かせる。</li>
+<li>入力を間違えたときは、BackSpace キーで文字を取り消せる。</li>
+</ol>
+<p>ただし、いくつか重要な違いもある。</p>
+<ol>
+<li><strong>編集できる行</strong>: テキストエディタは複数行を編集できるが、ターミナルでは基本的にプロンプトが表示されている行しか編集できない。他の行に表示された過去のコマンドや、コマンドの実行結果は編集できない。</li>
+<li><strong>Enter を押したときの処理</strong>: Enter キーを押すと単純に改行されるだけでなく、入力したコマンドが実行され、実行結果が表示される。</li>
+<li>自分の打った文字は BackSpace で削除できるが、プロンプトは削除できない。</li>
+</ol>
+<p><img src="/images/lmle/3-ls/terminal-vs-text-editor.png" alt="ターミナルとテキストエディタの比較"></p>
+<p>それでは、実際にコマンドを入力してみよう。</p>
+<h2 id="ls-コマンド"><code>ls</code> コマンド</h2>
+<p>最初のコマンドは <code>ls</code> だ。
+キーボードで <code>ls</code> と打ってみよう。
+次のように、<code>$</code> (または <code>#</code>) 記号の後ろに <code>ls</code> と表示されるはずだ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ls
+</span></span></code></pre></div><p>この状態で Enter を押すと、<code>ls</code> コマンドの処理が実行される。
+表示される内容は環境によって異なるが、私の環境では次のように表示された。
+あなたの環境では、どうだろうか。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ls
+</span></span><span class="line"><span class="cl">snap          テンプレート  ドキュメント  ピクチャ      公開
+</span></span><span class="line"><span class="cl">ダウンロード  デスクトップ  ビデオ        ミュージック
+</span></span><span class="line"><span class="cl">$
+</span></span></code></pre></div><blockquote>
+<p><strong>📔 ノート</strong></p>
+<p>Linux の解説書やインターネット上の Q&amp;A サイトなどでは、ユーザが実行するコマンドの前にプロンプト記号（<code>$</code> または <code>#</code>）をつけて、コマンドの出力と区別することが多い。
+この記事でも、その慣例に従っている。</p>
+<p>注意してほしいのは、実際にコマンドを実行するときは、<strong>プロンプト記号の後ろの部分だけを入力する</strong> ということだ。</p>
+<p>たとえば、解説書や Q&amp;A に、下記のコマンドが示されていたとしよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ ls
+</span></span></code></pre></div><p>このコマンドを実行するときは、最初の <code>$</code> を除いた <code>ls</code> だけを入力して Enter を押せばいい。</p>
+</blockquote>
+<p><code>ls</code> は、<strong>ディレクトリの中身を表示する</strong>コマンドだ。
+「ディレクトリ」というと小難しそうだが、Windows や Mac でいうところの「フォルダ」と同じ意味だ。</p>
+<p>読者のあなたは、Windows のエクスプローラや Mac OS の Finder でフォルダの中身を見る操作をした経験があると思う。
+それと同じように、Linux のコマンドラインでは <code>ls</code> を使って、ディレクトリ内のファイルや別のディレクトリを見ることができる。</p>
+<p><img src="/images/lmle/3-ls/ls-vs-files.png" alt="GUI でディレクトリを開く様子と、ls コマンドでディレクトリの内容を表示する様子を並べたスクリーンショット"></p>
+<p>さきほどの例では、<code>ls</code> コマンドを実行したことで、<strong>作業ディレクトリ</strong>の中にあるファイルやディレクトリが表示された。</p>
+<h2 id="作業ディレクトリ">作業ディレクトリ</h2>
+<p>「<strong>作業ディレクトリ</strong>」とは、ユーザが「今いる」ディレクトリのことだ。
+作業ディレクトリは、ファイルやディレクトリを操作するときの基準となる場所になる。</p>
+<p>エクスプローラや Finder を起動すると、ユーザは自分のユーザ名がついたフォルダや「ドキュメント」フォルダなど、どこかのフォルダを開いた状態でスタートする。
+そして、フォルダ内にあるファイルや別のフォルダをダブルクリックすると、そのファイルを開いたり、別のフォルダに「移動」して中身を見ることができる。</p>
+<p>これと同じように、ターミナルを開くとユーザはどこかのディレクトリを開いた状態になる。
+大抵は<strong>ホームディレクトリ</strong>という、ユーザ名のついたディレクトリが開かれる。
+この、ユーザがいま開いているディレクトリのことを「作業ディレクトリ」という。</p>
+<p>先ほど示した <code>ls</code> コマンドの実行結果は、ユーザがいる作業ディレクトリ（ホームディレクトリ）の中身を表示したものだ。
+つまり、私のホームディレクトリには <code>ダウンロード</code> や <code>デスクトップ</code>、<code>ドキュメント</code> などのディレクトリがある、ということになる。</p>
+<h2 id="pwd-コマンド-作業ディレクトリを表示する"><code>pwd</code> コマンド: 作業ディレクトリを表示する</h2>
+<p>では、自分がいるディレクトリ、つまり作業ディレクトリがどこなのかを知るにはどうすればいいだろうか。</p>
+<p>エクスプローラや Finder では、自分のいるフォルダがウィンドウ内に表示される。
+これと同様に、Linux では <code>pwd</code> というコマンドを使って、作業ディレクトリを表示することができる。
+実際に <code>pwd</code> コマンドを実行してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl">/home/yumemio
+</span></span></code></pre></div><p><code>pwd</code> コマンドを使うと、作業ディレクトリの場所が<strong>パス</strong>として表示される。
+Windows や Mac でも、フォルダやファイルの場所を <code>\</code> や <code>/</code> で区切ったパスを使って表すことがあると思う。</p>
+<ul>
+<li>Windows のファイルパス
+<pre tabindex="0"><code>C:\Users\yumemio\ドキュメント\制御工学特論1\中間レポート.docx
+</code></pre></li>
+<li>Mac のファイルパス
+<pre tabindex="0"><code>/Users/yumemio/Documents/総務/ISMS/監査報告書_2022.pdf
+</code></pre></li>
+</ul>
+<p>Linux では、Mac と同様にディレクトリ名ごとに <code>/</code> で区切ったパスを使う。</p>
+<ul>
+<li>Linux のファイルパス
+<pre tabindex="0"><code>/home/yumemio/ドキュメント/ブログ/images/title.png
+</code></pre></li>
+</ul>
+<p>先ほど実行した例では、カレントディレクトリの場所は <code>/home/yumemio</code> と表示されていた。
+つまり、私はいま <code>home</code> ディレクトリの中にある <code>yumemio</code> を開いている、ということになる。</p>
+<p><img src="/images/lmle/3-ls/files-dirtree-yumemio.png" alt="/home/yumemio のディレクトリツリーを、ファイル管理ソフトで表示した様子"></p>
+<h2 id="おわりに">おわりに</h2>
+<p>ここまでで <code>ls</code> と <code>pwd</code> という2つのコマンドを学んだ。
+また、作業ディレクトリやホームディレクトリなどの概念を、Windows や Mac などのOSと比較しながら紹介した。</p>
+<p>次の記事「ファイルパス」では、パスについて詳しく紹介する。
+パスを正しく理解することは、コマンドライン操作を使いこなすうえで欠かせないので、ぜひ読んでほしい。</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong>ターミナル</strong>: 文字を使ってコンピュータを操作するアプリケーション</li>
+<li><strong>ディレクトリ</strong>: ファイルをまとめて整理するもの。Windows や Mac OS の「フォルダ」と同じ意味</li>
+<li><strong><code>ls</code> コマンド</strong>: ディレクトリの中身を表示するコマンド</li>
+<li><strong>作業ディレクトリ</strong>: ユーザが「今いる」ディレクトリ。エクスプローラや Finder で「いま開いている」フォルダと同じ意味をもつ。</li>
+<li><strong>ホームディレクトリ</strong>: ターミナルを開いたときに初期状態で開かれる、ユーザ名のついたディレクトリ。</li>
+<li><strong><code>pwd</code> コマンド</strong>: 作業ディレクトリを表示するコマンド</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>Linux マシンを使って、GUI 上での操作がターミナルでのコマンド実行結果に反映されることを確かめよう。
+<ol>
+<li>ファイル管理ソフト（Ubuntu なら「ファイル」アプリ）を立ち上げる。</li>
+<li>ホームディレクトリを開いて、<code>テスト</code> という名前のディレクトリを作成する。</li>
+<li>ターミナルを開いて <code>ls</code> コマンドを実行し、「テスト」ディレクトリが表示されることを確かめる。</li>
+</ol>
+</li>
+<li>次のコマンドや概念について、それぞれ Windows や Mac のどのような機能・概念に相当するか、説明してみよう。
+<ul>
+<li><code>ls</code> コマンド</li>
+<li><code>pwd</code> コマンド</li>
+<li>ホームディレクトリ</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

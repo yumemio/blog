@@ -1,0 +1,42 @@
+{{/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Bud Parr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/}}
+{{ $featured_image := partial "func/GetFeaturedImage.html" . }}
+<article class="bb b--black-10 mw8">
+  <div class="db pv3 no-underline dark-gray">
+    <div class="flex flex-column flex-row-ns">
+      {{/* TODO: featured_image does not work. Sad :( */}}
+      {{ if $featured_image }}
+        {{/* Trimming the slash and adding absURL make sure the image works no matter where our site lives */}}
+        <div class="{{ cond (eq $.Site.Language.LanguageDirection "rtl")
+          "pl3-ns" "pr3-ns" }} mb4 mb0-ns w-100 w-20-ns">
+          <a href="{{.RelPermalink}}" class="db grow">
+            <img src="{{ $featured_image }}" class="img" alt="image from {{ .Title }}">
+          </a>
+        </div>
+      {{ end }}
+      <div class="blah w-100{{ if $featured_image }} {{ cond (eq $.Site.Language.LanguageDirection "rtl") "pr3-ns" "pl3-ns" }}{{ end }}">
+        <div class="flex f5 mb3">
+          {{ $localDateFormat := i18n "dateFormat" . | default "Jan. 2, 2006" }}
+          {{i18n "lastUpdatedAt"}} {{ dateFormat $localDateFormat .Date }}
+        </div>
+        <h2 class="f3 b mv2 lh-title">
+          <a href="{{.RelPermalink}}" class="color-inherit dim link">
+            {{ .Title }}
+          </a>
+        </h2>
+        <div class="f5 lh-copy nested-copy-line-height nested-links">
+          {{ .Summary }}
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

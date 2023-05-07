@@ -1,0 +1,84 @@
+{{/*
+The MIT License (MIT)
+
+Copyright (c) 2016 Bud Parr
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/}}
+{{ define "main" }}
+ <article class="mw9 cf ph3 ph5-l pv2 pv3-l f5 center lh-copy tj {{ $.Param
+   "text_color" | default "black" }} nested-links">
+    {{ .Content }}
+  </article>
+
+  {{/* ----- Latest posts ----- */}}
+  {{/* Define a section to pull recent posts from. For Hugo 0.20 this will default to the section with the most number of pages. */}}
+  {{ $mainSections := .Site.Params.mainSections | default (slice "post") }}
+  {{/* Create a variable with that section to use in multiple places. */}}
+  {{ $section := where .Site.RegularPages "Section" "in" $mainSections }}
+  {{/* Check to see if the section is defined for ranging through it */}}
+  {{ $section_count := len $section }}
+  {{ if ge $section_count 1 }}
+    {{/* Derive the section name  */}}
+    {{ $section_name := index (.Site.Params.mainSections) 0 }}
+
+    <div class="mw9 ph3 ph5-l w-100 center">
+      {{/* Use $section_name to get the section title. Use "with" to only show it if it exists */}}
+       {{ with .Site.GetPage "section" $section_name }}
+          <h1 class="f3 flex-none bb">
+            {{ $.Param "recent_copy" | default (i18n "recentTitle" .) | upper }}
+          </h1>
+        {{ end }}
+
+      {{ $n_posts := $.Param "recent_posts_number" | default 3 }}
+
+      <section class="w-100 ph3">
+        {{/* Range through the first $n_posts items of the section */}}
+        {{ range (first $n_posts $section) }}
+          <div class="relative w-100 mb2">
+            {{ .Render "summary-with-image" }}
+          </div>
+        {{ end }}
+      </section>
+
+      {{ if ge $section_count (add $n_posts 1) }}
+      <section class="w-100 pv3 ph3 nested-links">
+        {{/* As above, Use $section_name to get the section title, and URL. Use "with" to only show it if it exists */}}
+        {{ with .Site.GetPage "section" $section_name }}
+        <a href="{{ .RelPermalink }}" class="f5">
+          {{ i18n "allTitle" . | humanize }}
+        </a>
+        {{ end }}
+      </section>
+      {{ end }}
+
+    </div>
+  {{ end }}
+
+  {{/* ----- Series ----- */}}
+  {{/* Create a variable with that section to use in multiple places. */}}
+  {{ $section := .Site.Taxonomies.series }}
+  {{/* Check to see if the section is defined for ranging through it */}}
+  {{ $section_name := "series" }}
+
+  <div class="mw9 ph3 ph5-l w-100 center">
+    {{ with .Site.GetPage "taxonomyTerm" $section_name }}
+      <h1 class="f3 flex-none bb">
+        {{ i18n "series" . | humanize }}
+      </h1>
+    {{ end }}
+    <section class="w-100 ph3">
+    {{range $termName, $posts := $section }}
+      {{ with site.GetPage $termName }}
+        {{ .Render "summary-category" }}
+      {{ end }}
+    {{ end }}
+    </section>
+
+    {{ $n_posts := $.Param "recent_posts_number" | default 3 }}
+  </div>
+{{ end }}

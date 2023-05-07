@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://yumem.io/posts/linux-ml-3/</loc>
+    <lastmod>2023-05-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/</loc>
+    <lastmod>2023-05-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/posts/linux-ml-2/</loc>
+    <lastmod>2023-05-04T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/posts/linux-ml-1/</loc>
+    <lastmod>2023-05-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/posts/</loc>
+    <lastmod>2022-11-16T11:07:52+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/</loc>
+    <lastmod>2022-11-16T10:54:11+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/series/</loc>
+    <lastmod>2022-11-16T10:54:11+00:00</lastmod>
+  </url><url>
+    <loc>https://yumem.io/about/</loc>
+    <lastmod>2022-11-16T10:53:20+00:00</lastmod>
+  </url>
+</urlset>

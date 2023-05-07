@@ -1,0 +1,22 @@
+#!/bin/bash
+
+CONTAINER='test_hugo'
+
+function check_container_availability () {
+    docker inspect "${CONTAINER}" > /dev/null 2>&1
+    return $?
+}
+
+check_container_availability
+
+if [ $? -eq 0 ]; then
+    docker exec "${CONTAINER}" hugo $@
+else
+    docker run --rm \
+      -it \
+      --publish 4000:4000 \
+      --user 1000:1000 \
+      --name test_hugo \
+      --volume "$(pwd):/src" \
+      klakegg/hugo $@
+fi

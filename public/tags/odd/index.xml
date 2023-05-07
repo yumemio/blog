@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>odd on yumem.io</title>
+    <link>http://example.org/tags/odd/</link>
+    <description>Recent content in odd on yumem.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Wed, 16 Nov 2022 11:10:30 +0000</lastBuildDate><atom:link href="http://example.org/tags/odd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Finding files - advanced usages of the “find” command</title>
+      <link>http://example.org/posts/chapter-7/</link>
+      <pubDate>Wed, 16 Nov 2022 11:10:30 +0000</pubDate>
+      
+      <guid>http://example.org/posts/chapter-7/</guid>
+      <description>Hey Jude.
+h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
+例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
+$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
+（最後のファイルが気になる…）
+Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. </description>
+    </item>
+    
+    <item>
+      <title>Finding files - the basics</title>
+      <link>http://example.org/posts/chapter-5/</link>
+      <pubDate>Wed, 16 Nov 2022 11:10:25 +0000</pubDate>
+      
+      <guid>http://example.org/posts/chapter-5/</guid>
+      <description>Hey Jude.</description>
+    </item>
+    
+    <item>
+      <title>Chapter 3</title>
+      <link>http://example.org/posts/chapter-3/</link>
+      <pubDate>Wed, 16 Nov 2022 11:10:23 +0000</pubDate>
+      
+      <guid>http://example.org/posts/chapter-3/</guid>
+      <description>Hey Jude.</description>
+    </item>
+    
+  </channel>
+</rss>

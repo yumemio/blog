@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linux on yumem.io</title>
+    <link>http://example.org/tags/linux/</link>
+    <description>Recent content in linux on yumem.io</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>ja-jp</language>
+    <lastBuildDate>Wed, 23 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux はじめの一歩</title>
+      <link>http://example.org/posts/linux-ml-1/</link>
+      <pubDate>Wed, 23 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/posts/linux-ml-1/</guid>
+      <description>登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボット工学に興味があり、「人工知能とロボティクスの融合」を研究する藤野屋教授の研究室に入った。
+MacBook を持っているが、コマンドラインはほとんど使ったことがない。 将来の夢は、自律動作ロボットを作ること。
+阿智（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、深層学習を使った音声生成技術を研究中。
+研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
+藤野屋（ふじのや）教授：大学で応用情報科学を教えている。 Linux の扱いはお手の物。
+藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
+（Linux…）
+あのー、ちょっと質問してもいいですか？
+あぁ、君は3年の須藤くん、だよね？ ロボティクスに関心がある、って新人歓迎会のときに言ってたっけ？
+あ、そうです。よろしくお願いします。
+よろしく。大学院1年の阿智（あち）です。 それで、質問って？
+藤野屋先生の課題で、分からないところがあるんです。…というか、そもそも Linux 系の OS を使ったことがあまりないので、何から始めればよいのか…。
+なるほど。 確かに Linux は、他のOSに比べるととっつきにくいからね。
+ls まず、ターミナルを開いてみようか。こんな感じの記号
+$ sudo@ws1:~$ が表示されていると思う。
+出ました。これは何の記号ですか？
+これは「ターミナルがユーザの入力を待っている」ときに表示されるんだ。 つまり、これが出ているときは、ユーザがコマンドを入力できる。 入力を促す（prompt）という意味で、この記号を プロンプト と呼ぶこともある。
+じゃあ、試しに下記のコマンドを実行してみよう。 コマンドを入力して Enter キーを押すと、コマンドが実行される。
+ls どんな結果になった？
+こんな感じです。
+Arduino Documents Mail README.md	test	venv comp	edu	mbox rec	share	titles dl	lost+found person snap いいね、実行完了だ！ ls は、ディレクトリの中身を表示するコマンドなんだ。 …あぁ、ディレクトリっていうのは、他のOSでいうところの「フォルダ」と同じ意味だよ。</description>
+    </item>
+    
+  </channel>
+</rss>

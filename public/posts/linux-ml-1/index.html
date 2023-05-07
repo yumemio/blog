@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>機械学習エンジニアのためのLinux: はじめに | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第1回です。
+はじめに 機械学習エンジニアとして働くなかで、私は Linux を頻繁に使っている。 学習・推論だけでなく、データセットの作成や結果の集計・分析など、いろいろなデータやファイルの処理にも Linux を活用してきた。
+実際、Linux はこうした作業が得意な OS だ。 特にコマンドラインを使えば、大量のファイルを一度に編集したり、データどうしを紐づけたりするような複雑な作業もこなすことができる。
+Linux で効率的なファイル処理をするには、いろいろなツールを使いこなす必要がある。 たとえば、ファイルの検索なら find や locate コマンド、画像の編集なら ImageMagick、といった具合だ。
+だけど、これらのツールの機能や使い方をまとめて紹介してくれるチュートリアルは、あまり見かけない。
+このシリーズの目的は、 Linux のコマンドラインを用いて、ファイルを効率的に処理する方法を学ぶことだ。 特に、Windows や Mac の操作には慣れているが、Linux をあまり使ったことがない人、 あるいは Linux の知識を復習したい人を対象に、様々なツールの実践的な使い方を紹介しようと思う。
+なんで、コマンドラインなの？ Windows や Mac と比べた Linux の大きな特徴は、コマンドラインを多用する、というところだ。
+PC を操作するときに、この図のような文字ばかりの画面を使っている場面を見たことがあると思う。
+この黒い画面は コマンドライン や CLI (コマンドライン・インタフェース）とよばれ、 キーボードだけでコンピュータを操作できるという特徴がある。 ウィンドウやメニューをもつ GUI （グラフィカル・ユーザ・インタフェース） に比べるととっつきにくいけど、慣れればとても効率的に作業できるようになる。
+また、コマンドラインを使うことで、サーバにアクセスして操作することも簡単になる。 機械学習の現場では、高性能なサーバやクラウド上など、リモート（遠隔）での作業が必要になることが多い。 コマンドラインを使いこなせば、どこからでも簡単にサーバに接続して作業ができるようになる。
+コマンドラインで、何ができるの？ 「コマンドライン操作は効率的だ」と言われても、GUI に慣れている人はこう思うかもしれない。
+Windows/ Mac に比べてグラフィックスはしょぼいし、コマンドラインで大したことはできないんじゃない？
+そんなことはない。Linux のコマンドラインは、GUI に負けない多彩なツールを備えている。 Linux コマンドラインでできることのうち、ほんの一部を紹介しよう。
+ファイルの移動・コピー、検索 インターネット上からのファイルのダウンロード Web ブラウザ を使ったネットサーフィン メールの送受信や管理 高性能なテキストエディタを使ったテキスト編集、コーディング 画像、動画の編集 音楽の再生 ディスクパーティション操作などの 高度な管理タスク さらに、コマンドラインの大きなアドバンテージとして「ツールの組み合わせ」と「バッチ化」という2つの機能がある。 これは、次のように言い換えてもいい。">
+    <meta name="generator" content="Hugo 0.105.0">
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="機械学習エンジニアのためのLinux: はじめに" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第1回です。
+はじめに 機械学習エンジニアとして働くなかで、私は Linux を頻繁に使っている。 学習・推論だけでなく、データセットの作成や結果の集計・分析など、いろいろなデータやファイルの処理にも Linux を活用してきた。
+実際、Linux はこうした作業が得意な OS だ。 特にコマンドラインを使えば、大量のファイルを一度に編集したり、データどうしを紐づけたりするような複雑な作業もこなすことができる。
+Linux で効率的なファイル処理をするには、いろいろなツールを使いこなす必要がある。 たとえば、ファイルの検索なら find や locate コマンド、画像の編集なら ImageMagick、といった具合だ。
+だけど、これらのツールの機能や使い方をまとめて紹介してくれるチュートリアルは、あまり見かけない。
+このシリーズの目的は、 Linux のコマンドラインを用いて、ファイルを効率的に処理する方法を学ぶことだ。 特に、Windows や Mac の操作には慣れているが、Linux をあまり使ったことがない人、 あるいは Linux の知識を復習したい人を対象に、様々なツールの実践的な使い方を紹介しようと思う。
+なんで、コマンドラインなの？ Windows や Mac と比べた Linux の大きな特徴は、コマンドラインを多用する、というところだ。
+PC を操作するときに、この図のような文字ばかりの画面を使っている場面を見たことがあると思う。
+この黒い画面は コマンドライン や CLI (コマンドライン・インタフェース）とよばれ、 キーボードだけでコンピュータを操作できるという特徴がある。 ウィンドウやメニューをもつ GUI （グラフィカル・ユーザ・インタフェース） に比べるととっつきにくいけど、慣れればとても効率的に作業できるようになる。
+また、コマンドラインを使うことで、サーバにアクセスして操作することも簡単になる。 機械学習の現場では、高性能なサーバやクラウド上など、リモート（遠隔）での作業が必要になることが多い。 コマンドラインを使いこなせば、どこからでも簡単にサーバに接続して作業ができるようになる。
+コマンドラインで、何ができるの？ 「コマンドライン操作は効率的だ」と言われても、GUI に慣れている人はこう思うかもしれない。
+Windows/ Mac に比べてグラフィックスはしょぼいし、コマンドラインで大したことはできないんじゃない？
+そんなことはない。Linux のコマンドラインは、GUI に負けない多彩なツールを備えている。 Linux コマンドラインでできることのうち、ほんの一部を紹介しよう。
+ファイルの移動・コピー、検索 インターネット上からのファイルのダウンロード Web ブラウザ を使ったネットサーフィン メールの送受信や管理 高性能なテキストエディタを使ったテキスト編集、コーディング 画像、動画の編集 音楽の再生 ディスクパーティション操作などの 高度な管理タスク さらに、コマンドラインの大きなアドバンテージとして「ツールの組み合わせ」と「バッチ化」という2つの機能がある。 これは、次のように言い換えてもいい。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-1/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-05-03T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="機械学習エンジニアのためのLinux: はじめに">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第1回です。
+はじめに 機械学習エンジニアとして働くなかで、私は Linux を頻繁に使っている。 学習・推論だけでなく、データセットの作成や結果の集計・分析など、いろいろなデータやファイルの処理にも Linux を活用してきた。
+実際、Linux はこうした作業が得意な OS だ。 特にコマンドラインを使えば、大量のファイルを一度に編集したり、データどうしを紐づけたりするような複雑な作業もこなすことができる。
+Linux で効率的なファイル処理をするには、いろいろなツールを使いこなす必要がある。 たとえば、ファイルの検索なら find や locate コマンド、画像の編集なら ImageMagick、といった具合だ。
+だけど、これらのツールの機能や使い方をまとめて紹介してくれるチュートリアルは、あまり見かけない。
+このシリーズの目的は、 Linux のコマンドラインを用いて、ファイルを効率的に処理する方法を学ぶことだ。 特に、Windows や Mac の操作には慣れているが、Linux をあまり使ったことがない人、 あるいは Linux の知識を復習したい人を対象に、様々なツールの実践的な使い方を紹介しようと思う。
+なんで、コマンドラインなの？ Windows や Mac と比べた Linux の大きな特徴は、コマンドラインを多用する、というところだ。
+PC を操作するときに、この図のような文字ばかりの画面を使っている場面を見たことがあると思う。
+この黒い画面は コマンドライン や CLI (コマンドライン・インタフェース）とよばれ、 キーボードだけでコンピュータを操作できるという特徴がある。 ウィンドウやメニューをもつ GUI （グラフィカル・ユーザ・インタフェース） に比べるととっつきにくいけど、慣れればとても効率的に作業できるようになる。
+また、コマンドラインを使うことで、サーバにアクセスして操作することも簡単になる。 機械学習の現場では、高性能なサーバやクラウド上など、リモート（遠隔）での作業が必要になることが多い。 コマンドラインを使いこなせば、どこからでも簡単にサーバに接続して作業ができるようになる。
+コマンドラインで、何ができるの？ 「コマンドライン操作は効率的だ」と言われても、GUI に慣れている人はこう思うかもしれない。
+Windows/ Mac に比べてグラフィックスはしょぼいし、コマンドラインで大したことはできないんじゃない？
+そんなことはない。Linux のコマンドラインは、GUI に負けない多彩なツールを備えている。 Linux コマンドラインでできることのうち、ほんの一部を紹介しよう。
+ファイルの移動・コピー、検索 インターネット上からのファイルのダウンロード Web ブラウザ を使ったネットサーフィン メールの送受信や管理 高性能なテキストエディタを使ったテキスト編集、コーディング 画像、動画の編集 音楽の再生 ディスクパーティション操作などの 高度な管理タスク さらに、コマンドラインの大きなアドバンテージとして「ツールの組み合わせ」と「バッチ化」という2つの機能がある。 これは、次のように言い換えてもいい。"><meta itemprop="datePublished" content="2023-05-03T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-05-03T00:00:00+00:00" />
+<meta itemprop="wordCount" content="175">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="機械学習エンジニアのためのLinux: はじめに"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第1回です。
+はじめに 機械学習エンジニアとして働くなかで、私は Linux を頻繁に使っている。 学習・推論だけでなく、データセットの作成や結果の集計・分析など、いろいろなデータやファイルの処理にも Linux を活用してきた。
+実際、Linux はこうした作業が得意な OS だ。 特にコマンドラインを使えば、大量のファイルを一度に編集したり、データどうしを紐づけたりするような複雑な作業もこなすことができる。
+Linux で効率的なファイル処理をするには、いろいろなツールを使いこなす必要がある。 たとえば、ファイルの検索なら find や locate コマンド、画像の編集なら ImageMagick、といった具合だ。
+だけど、これらのツールの機能や使い方をまとめて紹介してくれるチュートリアルは、あまり見かけない。
+このシリーズの目的は、 Linux のコマンドラインを用いて、ファイルを効率的に処理する方法を学ぶことだ。 特に、Windows や Mac の操作には慣れているが、Linux をあまり使ったことがない人、 あるいは Linux の知識を復習したい人を対象に、様々なツールの実践的な使い方を紹介しようと思う。
+なんで、コマンドラインなの？ Windows や Mac と比べた Linux の大きな特徴は、コマンドラインを多用する、というところだ。
+PC を操作するときに、この図のような文字ばかりの画面を使っている場面を見たことがあると思う。
+この黒い画面は コマンドライン や CLI (コマンドライン・インタフェース）とよばれ、 キーボードだけでコンピュータを操作できるという特徴がある。 ウィンドウやメニューをもつ GUI （グラフィカル・ユーザ・インタフェース） に比べるととっつきにくいけど、慣れればとても効率的に作業できるようになる。
+また、コマンドラインを使うことで、サーバにアクセスして操作することも簡単になる。 機械学習の現場では、高性能なサーバやクラウド上など、リモート（遠隔）での作業が必要になることが多い。 コマンドラインを使いこなせば、どこからでも簡単にサーバに接続して作業ができるようになる。
+コマンドラインで、何ができるの？ 「コマンドライン操作は効率的だ」と言われても、GUI に慣れている人はこう思うかもしれない。
+Windows/ Mac に比べてグラフィックスはしょぼいし、コマンドラインで大したことはできないんじゃない？
+そんなことはない。Linux のコマンドラインは、GUI に負けない多彩なツールを備えている。 Linux コマンドラインでできることのうち、ほんの一部を紹介しよう。
+ファイルの移動・コピー、検索 インターネット上からのファイルのダウンロード Web ブラウザ を使ったネットサーフィン メールの送受信や管理 高性能なテキストエディタを使ったテキスト編集、コーディング 画像、動画の編集 音楽の再生 ディスクパーティション操作などの 高度な管理タスク さらに、コマンドラインの大きなアドバンテージとして「ツールの組み合わせ」と「バッチ化」という2つの機能がある。 これは、次のように言い換えてもいい。"/>
+
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white DEV">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">機械学習エンジニアのためのLinux: はじめに</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-05-03T00:00:00Z">
+        
+        2023年5月3日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-1/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-1/&amp;text=%e6%a9%9f%e6%a2%b0%e5%ad%a6%e7%bf%92%e3%82%a8%e3%83%b3%e3%82%b8%e3%83%8b%e3%82%a2%e3%81%ae%e3%81%9f%e3%82%81%e3%81%aeLinux:%20%e3%81%af%e3%81%98%e3%82%81%e3%81%ab" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第1回です。</p>
+<h2 id="はじめに">はじめに</h2>
+<p>機械学習エンジニアとして働くなかで、私は Linux を頻繁に使っている。
+学習・推論だけでなく、データセットの作成や結果の集計・分析など、いろいろなデータやファイルの処理にも Linux を活用してきた。</p>
+<p>実際、Linux はこうした作業が得意な OS だ。
+特にコマンドラインを使えば、大量のファイルを一度に編集したり、データどうしを紐づけたりするような複雑な作業もこなすことができる。</p>
+<p>Linux で効率的なファイル処理をするには、いろいろなツールを使いこなす必要がある。
+たとえば、ファイルの検索なら <code>find</code> や <code>locate</code> コマンド、画像の編集なら ImageMagick、といった具合だ。</p>
+<p>だけど、これらのツールの機能や使い方をまとめて紹介してくれるチュートリアルは、あまり見かけない。</p>
+<p>このシリーズの目的は、 <strong>Linux のコマンドラインを用いて、ファイルを効率的に処理する方法を学ぶこと</strong>だ。
+特に、Windows や Mac の操作には慣れているが、Linux をあまり使ったことがない人、
+あるいは Linux の知識を復習したい人を対象に、様々なツールの実践的な使い方を紹介しようと思う。</p>
+<h2 id="なんでコマンドラインなの">なんで、コマンドラインなの？</h2>
+<p>Windows や Mac と比べた Linux の大きな特徴は、コマンドラインを多用する、というところだ。</p>
+<p><img src="/images/lmle/3-ls/ls-result.png" alt="Ubuntu でターミナルを開いている画面"></p>
+<p>PC を操作するときに、この図のような文字ばかりの画面を使っている場面を見たことがあると思う。</p>
+<p>この黒い画面は <strong>コマンドライン</strong> や <strong>CLI</strong> (コマンドライン・インタフェース）とよばれ、
+キーボードだけでコンピュータを操作できるという特徴がある。
+ウィンドウやメニューをもつ <strong>GUI</strong> （グラフィカル・ユーザ・インタフェース）
+に比べるととっつきにくいけど、慣れればとても効率的に作業できるようになる。</p>
+<p>また、コマンドラインを使うことで、サーバにアクセスして操作することも簡単になる。
+機械学習の現場では、高性能なサーバやクラウド上など、リモート（遠隔）での作業が必要になることが多い。
+コマンドラインを使いこなせば、どこからでも簡単にサーバに接続して作業ができるようになる。</p>
+<h2 id="コマンドラインで何ができるの">コマンドラインで、何ができるの？</h2>
+<p>「コマンドライン操作は効率的だ」と言われても、GUI に慣れている人はこう思うかもしれない。</p>
+<blockquote>
+<p>Windows/ Mac に比べてグラフィックスはしょぼいし、コマンドラインで大したことはできないんじゃない？</p>
+</blockquote>
+<p><strong>そんなことはない</strong>。Linux のコマンドラインは、GUI に負けない多彩なツールを備えている。
+Linux コマンドラインでできることのうち、ほんの一部を紹介しよう。</p>
+<ul>
+<li><strong>ファイルの移動・コピー、検索</strong></li>
+<li>インターネット上からの<strong>ファイルのダウンロード</strong></li>
+<li><strong>Web ブラウザ</strong> を使ったネットサーフィン</li>
+<li><strong>メール</strong>の送受信や管理</li>
+<li><strong>高性能なテキストエディタ</strong>を使ったテキスト編集、コーディング</li>
+<li><strong>画像、動画</strong>の編集</li>
+<li><strong>音楽</strong>の再生</li>
+<li>ディスクパーティション操作などの <strong>高度な管理タスク</strong></li>
+</ul>
+<p>さらに、コマンドラインの大きなアドバンテージとして「<strong>ツールの組み合わせ</strong>」と「<strong>バッチ化</strong>」という2つの機能がある。
+これは、次のように言い換えてもいい。</p>
+<blockquote>
+<p>既存のツール（コマンド）を部品として、いろいろなプログラムが簡単に作れる</p>
+</blockquote>
+<p>この特徴をよく示す例を、一つ挙げてみよう。</p>
+<blockquote>
+<h3 id="課題">課題</h3>
+<p>機械学習用のデータセットを作成するとき、画像や音声を扱いやすいファイルサイズに縮小したい、という場合がある。
+<strong>JPEG 画像を手頃な大きさ</strong> &mdash;&mdash; たとえば、縦・横がそれぞれ 256px &mdash;&mdash; <strong>にリサイズする</strong>には、どうすればよいか。</p>
+</blockquote>
+<p>Windows や Mac の GUI では、OS 標準の画像編集ソフトや、市販の画像エディタなどを使ってリサイズすればいい。</p>
+<p>Linux にもいろいろな画像編集ツールがあるけれど、ここでは <code>mogrify</code> というコマンドを使うことにしよう。
+具体的には、次のようなコマンドになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mogrify -resize <span class="s1">&#39;256x256!&#39;</span> 画像.JPG
+</span></span></code></pre></div><p>では、次のような場合はどうだろう。</p>
+<blockquote>
+<h3 id="課題-1">課題</h3>
+<p>インターネットから収集した<strong>数百万枚の画像を、なるだけ高速に全部リサイズ</strong>したい</p>
+</blockquote>
+<p>GUI の場合、ふつうの画像編集ソフトには大量の画像を一気に編集する機能が備わっていない。
+Adobe Photoshop のようなマクロ機能を備えた高性能ソフトを使うか、
+プログラムを自作することになる。</p>
+<p>でも、Linux のコマンドラインなら、この作業は難しくない。
+さっきの <code>mogrify</code> コマンドに、2つのコマンドをくっつければいい:</p>
+<ol>
+<li>ファイルを検索する <code>find</code> コマンドと、</li>
+<li>検索結果に対して、画像編集ツール（<code>mogrify</code>）を並列実行するのに使う <code>xargs</code> コマンドだ。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -iname <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> xargs -P36 mogrify -resize <span class="s1">&#39;256x256!&#39;</span>
+</span></span></code></pre></div><p>これで、フォルダ内の JPEG 画像を全部リサイズすることができる。
+しかも、36個のプロセスで同時処理する（<code>-P36</code>）というおまけ付きだから、
+処理時間はかなり短くなるはずだ。
+（実は、このコマンドが正しく動作するにはいくつか条件がある。詳しくは、後の章で解説することにしたい。）</p>
+<p>さらに、いまのコマンドをテキストファイルとして保存すれば、
+「ファイルの並列リサイズスクリプト」になる。</p>
+<p>保存したテキストファイルの名前が <code>thumb</code> だとしよう。
+この場合、次のコマンドを実行すれば、最初のコマンドを打ち直さなくてもリサイズ処理ができる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> chmod u+x thumb
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ./thumb
+</span></span></code></pre></div><p>コマンドラインを使えば、このほかにも</p>
+<ul>
+<li>「数千個の動画から、指定した区間の音声だけを切り出して保存する」</li>
+<li>「システムの空き容量を、指定したメールアドレスに毎日送信する」</li>
+<li>「インターネットから天気予報データを取得して、気象予報の画像をつくる」</li>
+</ul>
+<p>など、いろいろなプログラムを既存のコマンドから手軽につくり出せる。</p>
+<h2 id="コマンドラインの可能性を引き出そう">コマンドラインの可能性を引き出そう</h2>
+<p>どうだろう。Linux のコマンドラインに興味をもってもらえただろうか。</p>
+<p>このシリーズでは、Linux コマンドラインの基本的な使い方から、機械学習エンジニアに役立つツールやテクニックまでを紹介していく。
+また、機械学習に関連する例題も取り上げ、コマンドラインを活用した効率的なデータ処理方法を解説していく。</p>
+<p>最初は難しく感じるかもしれないけれど、一歩ずつ進めば、コマンドラインの持つ強力な機能を活用できるようになるだろう。
+慣れてくると、以前は GUI で行っていた作業もコマンドラインで素早く行えるようになり、作業効率が大幅に向上することに驚くかもしれない。</p>
+<p>このシリーズを通して、Linux コマンドラインを使った作業が、機械学習エンジニアの日常業務をより効率的で快適なものに変えることを実感してもらえれば幸いだ。</p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
