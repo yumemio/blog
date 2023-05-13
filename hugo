@@ -1,6 +1,19 @@
 #!/bin/bash
 
 CONTAINER='test_hugo'
+HUGO_ENV=''
+
+# Check if the script is called with '-p' or '--publish'
+# If yes, remove it from the arguments
+ARGS=()
+for arg in "$@"
+do
+    if [[ $arg == '--prod' ]]; then
+        HUGO_ENV='production'
+    else
+        ARGS+=("$arg")
+    fi
+done
 
 function check_container_availability () {
     docker inspect "${CONTAINER}" > /dev/null 2>&1
@@ -10,13 +23,24 @@ function check_container_availability () {
 check_container_availability
 
 if [ $? -eq 0 ]; then
-    docker exec "${CONTAINER}" hugo $@
+    docker exec "${CONTAINER}" hugo "${ARGS[@]}"
 else
-    docker run --rm \
-      -it \
-      --publish 4000:4000 \
-      --user 1000:1000 \
-      --name test_hugo \
-      --volume "$(pwd):/src" \
-      klakegg/hugo $@
+    # Construct Docker run command
+    docker_run_command=(
+        docker run --rm
+        -it
+        --publish 4000:4000
+        --user 1000:1000
+        --name "${CONTAINER}"
+        --volume "$(pwd):/src"
+    )
+
+    # Add environment variable if HUGO_ENV is not empty
+    if [ -n "${HUGO_ENV}" ]; then
+        docker_run_command+=("-e" "HUGO_ENV=${HUGO_ENV}")
+    fi
+
+    docker_run_command+=("klakegg/hugo:ext")
+
+    "${docker_run_command[@]}" "${ARGS[@]}"
 fi

@@ -18,7 +18,7 @@ The blog provides tutorials, learning materials and other useful information for
 1. Access `http://localhost:4000` to view the webpage.
 1. Run the following command to build static files:
     ```console
-    $ ./hugo build
+    $ ./hugo --prod build
     ```
 
 ## Credits
