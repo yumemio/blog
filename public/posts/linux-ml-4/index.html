@@ -1,0 +1,488 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>cdコマンドの使い方、相対パスと絶対パスのちがい | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第4回です。
+cd コマンド 前回の記事 で、作業ディレクトリやパスについて簡単な説明をした。 今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。
+作業ディレクトリを変更するには、cd コマンドを使う。 エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、cd コマンドはそれと同じ役割を担っている。
+cd には移動先のディレクトリを指定する。基本的な使い方はこうだ。
+cd &lt;ディレクトリパス&gt; &lt;ディレクトリパス&gt; は、ディレクトリ名やパスに置き換えて使う。 cd と &lt;ディレクトリパス&gt; の間に、半角スペースが空いていることに注意してほしい。
+それでは cd の具体的な使い方を、実例を交えて見ていこう。
+1階層下のディレクトリに移動する いま、ホームディレクトリを開いているとしよう。 ls を実行すると次のようになる。
+$ ls snap テンプレート ドキュメント ピクチャ 公開 ダウンロード デスクトップ ビデオ ミュージック この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。 これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。
+$ cd ドキュメント これで、作業ディレクトリが切り替わった。 pwd コマンドで確かめてみよう。
+$ pwd /home/yumemio/ドキュメント エクスプローラや Finder と異なり、cd で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。 ls コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。 もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。
+$ ls sonnet.txt cd -: 直前の作業ディレクトリに戻る 直前の作業ディレクトリ（この例では yumemio）に戻る場合は、&quot;cd -&quot; を使う。 この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり cd - は直前のディレクトリ以外の履歴を保持しない。">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="cdコマンドの使い方、相対パスと絶対パスのちがい" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第4回です。
+cd コマンド 前回の記事 で、作業ディレクトリやパスについて簡単な説明をした。 今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。
+作業ディレクトリを変更するには、cd コマンドを使う。 エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、cd コマンドはそれと同じ役割を担っている。
+cd には移動先のディレクトリを指定する。基本的な使い方はこうだ。
+cd &lt;ディレクトリパス&gt; &lt;ディレクトリパス&gt; は、ディレクトリ名やパスに置き換えて使う。 cd と &lt;ディレクトリパス&gt; の間に、半角スペースが空いていることに注意してほしい。
+それでは cd の具体的な使い方を、実例を交えて見ていこう。
+1階層下のディレクトリに移動する いま、ホームディレクトリを開いているとしよう。 ls を実行すると次のようになる。
+$ ls snap テンプレート ドキュメント ピクチャ 公開 ダウンロード デスクトップ ビデオ ミュージック この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。 これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。
+$ cd ドキュメント これで、作業ディレクトリが切り替わった。 pwd コマンドで確かめてみよう。
+$ pwd /home/yumemio/ドキュメント エクスプローラや Finder と異なり、cd で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。 ls コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。 もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。
+$ ls sonnet.txt cd -: 直前の作業ディレクトリに戻る 直前の作業ディレクトリ（この例では yumemio）に戻る場合は、&quot;cd -&quot; を使う。 この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり cd - は直前のディレクトリ以外の履歴を保持しない。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-4/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-05-14T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="cdコマンドの使い方、相対パスと絶対パスのちがい">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第4回です。
+cd コマンド 前回の記事 で、作業ディレクトリやパスについて簡単な説明をした。 今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。
+作業ディレクトリを変更するには、cd コマンドを使う。 エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、cd コマンドはそれと同じ役割を担っている。
+cd には移動先のディレクトリを指定する。基本的な使い方はこうだ。
+cd &lt;ディレクトリパス&gt; &lt;ディレクトリパス&gt; は、ディレクトリ名やパスに置き換えて使う。 cd と &lt;ディレクトリパス&gt; の間に、半角スペースが空いていることに注意してほしい。
+それでは cd の具体的な使い方を、実例を交えて見ていこう。
+1階層下のディレクトリに移動する いま、ホームディレクトリを開いているとしよう。 ls を実行すると次のようになる。
+$ ls snap テンプレート ドキュメント ピクチャ 公開 ダウンロード デスクトップ ビデオ ミュージック この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。 これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。
+$ cd ドキュメント これで、作業ディレクトリが切り替わった。 pwd コマンドで確かめてみよう。
+$ pwd /home/yumemio/ドキュメント エクスプローラや Finder と異なり、cd で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。 ls コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。 もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。
+$ ls sonnet.txt cd -: 直前の作業ディレクトリに戻る 直前の作業ディレクトリ（この例では yumemio）に戻る場合は、&quot;cd -&quot; を使う。 この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり cd - は直前のディレクトリ以外の履歴を保持しない。"><meta itemprop="datePublished" content="2023-05-14T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-05-14T00:00:00+00:00" />
+<meta itemprop="wordCount" content="335">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="cdコマンドの使い方、相対パスと絶対パスのちがい"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第4回です。
+cd コマンド 前回の記事 で、作業ディレクトリやパスについて簡単な説明をした。 今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。
+作業ディレクトリを変更するには、cd コマンドを使う。 エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、cd コマンドはそれと同じ役割を担っている。
+cd には移動先のディレクトリを指定する。基本的な使い方はこうだ。
+cd &lt;ディレクトリパス&gt; &lt;ディレクトリパス&gt; は、ディレクトリ名やパスに置き換えて使う。 cd と &lt;ディレクトリパス&gt; の間に、半角スペースが空いていることに注意してほしい。
+それでは cd の具体的な使い方を、実例を交えて見ていこう。
+1階層下のディレクトリに移動する いま、ホームディレクトリを開いているとしよう。 ls を実行すると次のようになる。
+$ ls snap テンプレート ドキュメント ピクチャ 公開 ダウンロード デスクトップ ビデオ ミュージック この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。 これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。
+$ cd ドキュメント これで、作業ディレクトリが切り替わった。 pwd コマンドで確かめてみよう。
+$ pwd /home/yumemio/ドキュメント エクスプローラや Finder と異なり、cd で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。 ls コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。 もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。
+$ ls sonnet.txt cd -: 直前の作業ディレクトリに戻る 直前の作業ディレクトリ（この例では yumemio）に戻る場合は、&quot;cd -&quot; を使う。 この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり cd - は直前のディレクトリ以外の履歴を保持しない。"/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">cdコマンドの使い方、相対パスと絶対パスのちがい</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-05-14T00:00:00Z">
+        
+        2023年5月14日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-4/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-4/&amp;text=cd%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%81%ae%e4%bd%bf%e3%81%84%e6%96%b9%e3%80%81%e7%9b%b8%e5%af%be%e3%83%91%e3%82%b9%e3%81%a8%e7%b5%b6%e5%af%be%e3%83%91%e3%82%b9%e3%81%ae%e3%81%a1%e3%81%8c%e3%81%84" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第4回です。</p>
+<h2 id="cd-コマンド"><code>cd</code> コマンド</h2>
+<p><a href="/posts/linux-ml-3">前回の記事</a> で、<strong>作業ディレクトリ</strong>や<strong>パス</strong>について簡単な説明をした。
+今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。</p>
+<p>作業ディレクトリを変更するには、<strong><code>cd</code> コマンド</strong>を使う。
+エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、<code>cd</code> コマンドはそれと同じ役割を担っている。</p>
+<p><code>cd</code> には移動先のディレクトリを指定する。基本的な使い方はこうだ。</p>
+<pre tabindex="0"><code>cd &lt;ディレクトリパス&gt;
+</code></pre><p><code>&lt;ディレクトリパス&gt;</code> は、ディレクトリ名やパスに置き換えて使う。
+<code>cd</code> と <code>&lt;ディレクトリパス&gt;</code> の間に、半角スペースが空いていることに注意してほしい。</p>
+<p>それでは <code>cd</code> の具体的な使い方を、実例を交えて見ていこう。</p>
+<h3 id="1階層下のディレクトリに移動する">1階層下のディレクトリに移動する</h3>
+<p>いま、ホームディレクトリを開いているとしよう。
+<code>ls</code> を実行すると次のようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> ls
+</span></span><span class="line"><span class="cl"><span class="go">snap          テンプレート  ドキュメント  ピクチャ      公開
+</span></span></span><span class="line"><span class="cl"><span class="go">ダウンロード  デスクトップ  ビデオ        ミュージック
+</span></span></span></code></pre></div><p>この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。
+これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> ドキュメント
+</span></span></code></pre></div><p>これで、作業ディレクトリが切り替わった。
+<code>pwd</code> コマンドで確かめてみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span></code></pre></div><p>エクスプローラや Finder と異なり、<code>cd</code> で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。
+<code>ls</code> コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。
+もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> ls
+</span></span><span class="line"><span class="cl"><span class="go">sonnet.txt
+</span></span></span></code></pre></div><h3 id="cd---直前の作業ディレクトリに戻る"><code>cd -</code>: 直前の作業ディレクトリに戻る</h3>
+<p>直前の作業ディレクトリ（この例では <code>yumemio</code>）に戻る場合は、&quot;<code>cd -</code>&quot; を使う。
+この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり <strong><code>cd -</code> は直前のディレクトリ以外の履歴を保持しない</strong>。</p>
+<p>つまり、戻るボタンを複数回押すと、過去のディレクトリにさかのぼって戻ることができるが、<code>cd -</code> を複数回実行しても、直前のディレクトリとの間を行き来するだけ、ということだ。</p>
+<p>試しに <code>cd -</code> を複数回実行してみると、「戻る」ボタンとの違いがわかると思う。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> -
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> -
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span></code></pre></div><h3 id="ディレクトリパスなしの-cd-ホームディレクトリに戻る">ディレクトリパスなしの <code>cd</code>: ホームディレクトリに戻る</h3>
+<p>ディレクトリパスを指定せずに <code>cd</code> を実行すると、ホームディレクトリに戻ることができる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio
+</span></span></span></code></pre></div><h3 id="いまの作業ディレクトリより上の階層に移動する">いまの作業ディレクトリより上の階層に移動する</h3>
+<p>現在の作業ディレクトリより上に移動する場合は、&quot;<code>cd ..</code>&quot; を使う。
+<strong>&quot;<code>..</code>&quot;</strong> は<strong>親ディレクトリ</strong>&mdash;&mdash; 1階層上のディレクトリ &mdash;&mdash; を示す特殊なパスだ。</p>
+<p><code>..</code> を使って、ホームディレクトリから上の階層に移動してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> ..
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> ..
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/
+</span></span></span></code></pre></div><p>最後の例で、<code>/</code> というディレクトリに移動した。
+このディレクトリはディレクトリ階層の最上位に位置していて、Linux システムのすべてのファイルを格納している。
+このディレクトリを <strong>ルートディレクトリ</strong> ということもある。</p>
+<p>このほか、&quot;<code>.</code>&quot; はディレクトリ自体を示すパスとなる、ということも覚えておこう。</p>
+<h3 id="2階層以上離れたディレクトリに移動する">2階層以上離れたディレクトリに移動する</h3>
+<p>ここまでは1階層ずつの移動を紹介したが、<code>cd</code> コマンドでは2階層以上離れたディレクトリに直接移動することも簡単にできる。</p>
+<p>例えば、 <code>/</code> ディレクトリから「ドキュメント」ディレクトリに移動したいとしよう。</p>
+<p><code>cd home</code> → <code>cd yumemio</code> → <code>cd ドキュメント</code> というように3段階で移動することもできるが、次のように一気に移動することもできる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> home/yumemio/ドキュメント
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span></code></pre></div><blockquote>
+<p>📔 <strong>ノート: タブ補完</strong></p>
+<p>たいていの環境には<strong>タブ補完機能</strong>が備わっており、これを使うと、さらに高速にディレクトリ間を移動できる。</p>
+<p>タブ補完の使い方を説明しよう。
+<code>cd</code> コマンドの場合、まずディレクトリ名の一部を入力する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> home/yu
+</span></span></code></pre></div><p>この状態で <code>Tab</code> キーを押すと、<code>home</code> ディレクトリの直下に <code>yu</code> で始まる名前のディレクトリがあるか検索される。
+そして、該当するディレクトリが1個しかなければ、その名前が補完される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> home/yumemio/
+</span></span></code></pre></div><p><code>yu</code> で始まるディレクトリがない場合や、複数該当する場合は、なにも表示されない。
+この場合は <code>Tab</code> キーをもう一度押してみよう。
+その名前で始まるディレクトリがなければ、表示は変化しない。
+もし複数の補完候補があるならば、その候補が一覧表示される。</p>
+<p>たとえば次の例では、<code>yukak</code> と <code>yumemio</code> という2つの補完候補が示されている。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> home/yu
+</span></span><span class="line"><span class="cl"><span class="go">yukak/  yumemio/
+</span></span></span></code></pre></div><p>続きを入力して、ディレクトリが1個に絞り込めるようになったら、再度タブ補完を実行すればいい。
+上の例では、 <code>yum</code> まで入力して再度 <code>Tab</code> キーを押すと、<code>yumemio/</code> が補完される。</p>
+</blockquote>
+<p>親ディレクトリを表す &ldquo;<code>..</code>&rdquo; を使うと、さらに自在に移動することができる。
+例えば、<code>/home/yumemio/ドキュメント</code> から <code>/home/yumemio/ダウンロード</code> に移動する場合は、次のようにできる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ドキュメント
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> <span class="nb">cd</span> ../ダウンロード
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio/ダウンロード
+</span></span></span></code></pre></div><p>なお、環境によっては &ldquo;<code>...</code>&rdquo; で2階層上、 &ldquo;<code>....</code>&rdquo; で3階層上&hellip;のように移動することもできるが、この機能をもたない環境も多い。
+詳しくは、別の記事で紹介しよう。</p>
+<h3 id="絶対パスを使った移動">絶対パスを使った移動</h3>
+<p><code>..</code> を繰り返し使えばルートディレクトリ (<code>/</code>) まで遡ることができるので、理論上はどんな場所のディレクトリも開くことができる。
+しかし、今の作業ディレクトリと全く違う場所にあるディレクトリを直接開きたい場合、この方法は不便だ。</p>
+<p>例えば、次のような移動を考えてみよう。</p>
+<ul>
+<li>移動前のディレクトリ: <code>/home/yumemio/ドキュメント/blog/posts</code></li>
+<li>移動後のディレクトリ: <code>/usr/share/nginx/html</code></li>
+</ul>
+<p>この場合、次のようなコマンドで移動することもできるが、パスが長くなってしまう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> ../../../../usr/share/nginx/html
+</span></span></code></pre></div><p>作業ディレクトリから遠く離れた場所へ移動する場合は、ルートディレクトリからたどったパスを指定するほうが便利だ。
+このやり方は、エクスプローラや Finder のパスバーに直接フォルダパスを貼り付けて開く操作に近い。</p>
+<p>例えば、先ほどの移動は、次のような短いコマンドに書き直せる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /usr/share/nginx/html
+</span></span></code></pre></div><h2 id="相対パスと絶対パス">相対パスと絶対パス</h2>
+<p>ここまで、<code>cd</code> コマンドにいろいろな形式でディレクトリパスを指定する例を見てきた。</p>
+<p>最後の例で見たような、ルートディレクトリからたどったパスのことを<strong>絶対パス</strong> (absolute path) という。
+これに対して、現在の作業ディレクトリからたどったパスのことを<strong>相対パス</strong> (relative path) という。</p>
+<p>Linux でディレクトリやファイルの場所を指定する場合、基本的には相対パスと絶対パスのどちらを使ってもよい。
+近くのディレクトリに移動する場合は相対パス、遠くに移動するときは絶対パス、というように使い分けよう。</p>
+<p>下の図に、ホームディレクトリ (<code>yumemio</code>) を作業ディレクトリとした場合の、相対パスと絶対パスの違いを示したので、参考にしてほしい。</p>
+<p><img src="/images/lmle/4-cd/files-home-dir-tree.png" alt="ホームディレクトリから&quot;/&quot;、&amp;ldquo;ドキュメント&amp;rdquo;、&quot;/var/www&quot; の各ディレクトリへの絶対パスと相対パス"></p>
+<h2 id="おわりに">おわりに</h2>
+<p>今回は <code>cd</code> コマンドの使い方や、相対パスと絶対パスの違いについて紹介した。</p>
+<p>ここまでの連載で、コマンドラインの基本的な操作方法をエクスプローラや Finder と比較しながら学んできたが、
+こんな風に思った読者もいるのではないだろうか。</p>
+<blockquote>
+<p><strong>フォルダを開いたり移動したりするだけなら、エクスプローラ/Finderでもできるじゃん。これのどこがすごいんだよ！</strong></p>
+</blockquote>
+<p>ごもっともである。</p>
+<p>というわけで、次回以降は Linux コマンドラインの真価を引き出す「コマンドの組み合わせ（パイプ）」や「入出力リダイレクト」などの機能を取り上げたいと思う。
+これらの機能を使えば、GUIツールでは難しい、あるいは不可能な作業を、簡単かつ効率的に実行することができる。</p>
+<p>次回以降の連載で、これらのテクニックを具体例を交えながら解説していく。お楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong><code>cd</code> コマンド</strong>: 作業ディレクトリ（今いるディレクトリ）を変更するコマンド
+<ul>
+<li><strong><code>cd</code></strong>: ホームディレクトリに戻る</li>
+<li><strong><code>cd -</code></strong>: 直前の作業ディレクトリに戻る</li>
+<li><strong><code>cd ..</code></strong>: 1階層上のディレクトリに移動する</li>
+<li><strong><code>cd ../..</code></strong>: 2階層上のディレクトリに移動する</li>
+<li><strong><code>cd /var/www</code></strong>: <code>/var/www</code> ディレクトリに移動する</li>
+</ul>
+</li>
+<li>相対パスと絶対パス
+<ul>
+<li><strong>相対パス</strong>: 作業ディレクトリから目的のファイル（ディレクトリ）までのパス</li>
+<li><strong>絶対パス</strong>: ルートディレクトリから目的のファイル（ディレクトリ）までのパス</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>
+<p>次のようなディレクトリ構造があるとしよう。</p>
+<p><img src="/images/lmle/4-cd/dirtree-drill.png" alt="ディレクトリ構造図"></p>
+<p>ユーザ <code>chiyuris</code> で作業をしていて、作業ディレクトリが <code>mnist</code> のとき、下記のディレクトリに移動するにはどのようなコマンドを使えばいいか、考えてみよう。</p>
+<ul>
+<li><code>train</code></li>
+<li><code>chiyuris</code> の下の <code>datasets</code></li>
+<li><code>chiyuris</code></li>
+<li>ルートディレクトリ</li>
+<li><code>backup</code> の下の <code>datasets</code></li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

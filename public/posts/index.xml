@@ -9,6 +9,25 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>cdコマンドの使い方、相対パスと絶対パスのちがい</title>
+      <link>https://yumem.io/posts/linux-ml-4/</link>
+      <pubDate>Sun, 14 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-4/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第4回です。
+cd コマンド 前回の記事 で、作業ディレクトリやパスについて簡単な説明をした。 今回は、作業ディレクトリを変えるコマンドを紹介し、パスの概念について掘り下げていく。
+作業ディレクトリを変更するには、cd コマンドを使う。 エクスプローラや Finder では、フォルダをダブルクリックしたり、パスバーにフォルダパスを指定したりして作業ディレクトリを変更できるが、cd コマンドはそれと同じ役割を担っている。
+cd には移動先のディレクトリを指定する。基本的な使い方はこうだ。
+cd &amp;lt;ディレクトリパス&amp;gt; &amp;lt;ディレクトリパス&amp;gt; は、ディレクトリ名やパスに置き換えて使う。 cd と &amp;lt;ディレクトリパス&amp;gt; の間に、半角スペースが空いていることに注意してほしい。
+それでは cd の具体的な使い方を、実例を交えて見ていこう。
+1階層下のディレクトリに移動する いま、ホームディレクトリを開いているとしよう。 ls を実行すると次のようになる。
+$ ls snap テンプレート ドキュメント ピクチャ 公開 ダウンロード デスクトップ ビデオ ミュージック この状態で「ドキュメント」ディレクトリを開きたい場合は、次のコマンドを実行する。 これは、エクスプローラや Finder でフォルダを選択して開くのと同じことだ。
+$ cd ドキュメント これで、作業ディレクトリが切り替わった。 pwd コマンドで確かめてみよう。
+$ pwd /home/yumemio/ドキュメント エクスプローラや Finder と異なり、cd で作業ディレクトリを移動しただけではディレクトリの中身は表示されない。 ls コマンドを実行して、「ドキュメント」ディレクトリの中身を表示しよう。 もし「ドキュメント」にファイルがない場合は、GUI上で適当なファイルを作成してからコマンドを実行してみよう。
+$ ls sonnet.txt cd -: 直前の作業ディレクトリに戻る 直前の作業ディレクトリ（この例では yumemio）に戻る場合は、&amp;quot;cd -&amp;quot; を使う。 この機能はエクスプローラや Finder の「戻る（←）」ボタンに近いが、戻るボタンと異なり cd - は直前のディレクトリ以外の履歴を保持しない。</description>
+    </item>
+    
+    <item>
       <title>Hello Linux!: ターミナル、lsコマンド、pwdコマンド</title>
       <link>https://yumem.io/posts/linux-ml-3/</link>
       <pubDate>Sun, 07 May 2023 00:00:00 +0000</pubDate>
