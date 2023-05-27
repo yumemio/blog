@@ -35,7 +35,7 @@ AIやGISの分野はとても奥深い一方、覚えることがたくさんあ
 
 ## ライセンス
 
-* **当Webサイトのコンテンツ**は [CC BY-SA 4.0 国際](https://creativecommons.jp/sciencecommons/aboutcc0/) ライセンスで公開します。  
+* **当Webサイトのコンテンツ**は [CC BY-SA 4.0 国際](https://creativecommons.org/licenses/by-sa/4.0/deed.ja) ライセンスで公開します。  
 ただし、**ページ内で特に記載がある場合は、そのライセンスが優先します**。
 明示的な記載の有無にかかわらず、第三者が権利を有するコンテンツについては、利用者の責任で利用許諾を得てください。
 
