@@ -23,7 +23,7 @@ jobs:
 
     - name: Copy files to the S3 bucket
       run: |
-        aws s3 sync . s3://yumem.io --delete
+        aws s3 sync ./public s3://yumem.io --delete
 
     - name: Invalidate CloudFront distribution
       run: |
