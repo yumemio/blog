@@ -7,7 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <copyright>Yuki Sasaki</copyright>
-    <lastBuildDate>Sun, 21 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 May 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux コマンドラインのコンセプト: パイプ機能と tr コマンド</title>
+      <link>https://yumem.io/posts/linux-ml-6/</link>
+      <pubDate>Sun, 28 May 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-6/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第6回です。
+パイプ 前回の記事では、出力リダイレクトについて学んだ。 command &amp;gt; /path/to/file のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。
+この記事では パイプ という機能と、パイプ機能でよく使う tr というコマンドを紹介する。
+パイプは、あるコマンドの出力を、別のコマンドの入力とする機能だ。 この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。
+Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。 格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。 パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。
+同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。 この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。
+📔 ノート
+画面に表示されるコマンドの出力を、専門的には「標準出力（STDOUT）」という。 また、コマンドへの入力のことを「標準入力（STDIN）」という。
+標準入出力については、別の記事で詳しく紹介したいと思う。
+例題: ファイル一覧を CSV 形式で出力する パイプ機能を利用する例として、次のようなケースを考えてみよう。
+❓ 課題
+次に示すディレクトリ構造をもつデータセットがあるとしよう。 （前回の記事で、例題として取り上げたデータセットと同じ構造だ）
+/home/me/dataset |-train/ | |-speaker_a/ | | |-speech_0001.wav | | |-speech_0002.wav | | ... | |-speaker_b/ | |-speaker_c/ | | ... | `-speaker_z/ `-validation/ |-speaker_a/ | |-speech_1001.wav | |-speech_1002.wav | ... |-speaker_b/ |-speaker_c/ | ... `-speaker_z/ このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。</description>
+    </item>
+    
     <item>
       <title>Linux コマンドラインのコンセプト: テキスト指向性、出力リダイレクト、引数</title>
       <link>https://yumem.io/posts/linux-ml-5/</link>

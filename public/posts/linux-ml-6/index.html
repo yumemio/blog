@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Linux コマンドラインのコンセプト: パイプ機能と tr コマンド | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第6回です。
+パイプ 前回の記事では、出力リダイレクトについて学んだ。 command &gt; /path/to/file のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。
+この記事では パイプ という機能と、パイプ機能でよく使う tr というコマンドを紹介する。
+パイプは、あるコマンドの出力を、別のコマンドの入力とする機能だ。 この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。
+Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。 格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。 パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。
+同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。 この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。
+📔 ノート
+画面に表示されるコマンドの出力を、専門的には「標準出力（STDOUT）」という。 また、コマンドへの入力のことを「標準入力（STDIN）」という。
+標準入出力については、別の記事で詳しく紹介したいと思う。
+例題: ファイル一覧を CSV 形式で出力する パイプ機能を利用する例として、次のようなケースを考えてみよう。
+❓ 課題
+次に示すディレクトリ構造をもつデータセットがあるとしよう。 （前回の記事で、例題として取り上げたデータセットと同じ構造だ）
+/home/me/dataset |-train/ | |-speaker_a/ | | |-speech_0001.wav | | |-speech_0002.wav | | ... | |-speaker_b/ | |-speaker_c/ | | ... | `-speaker_z/ `-validation/ |-speaker_a/ | |-speech_1001.wav | |-speech_1002.wav | ... |-speaker_b/ |-speaker_c/ | ... `-speaker_z/ このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Linux コマンドラインのコンセプト: パイプ機能と tr コマンド" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第6回です。
+パイプ 前回の記事では、出力リダイレクトについて学んだ。 command &gt; /path/to/file のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。
+この記事では パイプ という機能と、パイプ機能でよく使う tr というコマンドを紹介する。
+パイプは、あるコマンドの出力を、別のコマンドの入力とする機能だ。 この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。
+Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。 格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。 パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。
+同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。 この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。
+📔 ノート
+画面に表示されるコマンドの出力を、専門的には「標準出力（STDOUT）」という。 また、コマンドへの入力のことを「標準入力（STDIN）」という。
+標準入出力については、別の記事で詳しく紹介したいと思う。
+例題: ファイル一覧を CSV 形式で出力する パイプ機能を利用する例として、次のようなケースを考えてみよう。
+❓ 課題
+次に示すディレクトリ構造をもつデータセットがあるとしよう。 （前回の記事で、例題として取り上げたデータセットと同じ構造だ）
+/home/me/dataset |-train/ | |-speaker_a/ | | |-speech_0001.wav | | |-speech_0002.wav | | ... | |-speaker_b/ | |-speaker_c/ | | ... | `-speaker_z/ `-validation/ |-speaker_a/ | |-speech_1001.wav | |-speech_1002.wav | ... |-speaker_b/ |-speaker_c/ | ... `-speaker_z/ このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-6/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-05-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-05-28T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="Linux コマンドラインのコンセプト: パイプ機能と tr コマンド">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第6回です。
+パイプ 前回の記事では、出力リダイレクトについて学んだ。 command &gt; /path/to/file のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。
+この記事では パイプ という機能と、パイプ機能でよく使う tr というコマンドを紹介する。
+パイプは、あるコマンドの出力を、別のコマンドの入力とする機能だ。 この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。
+Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。 格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。 パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。
+同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。 この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。
+📔 ノート
+画面に表示されるコマンドの出力を、専門的には「標準出力（STDOUT）」という。 また、コマンドへの入力のことを「標準入力（STDIN）」という。
+標準入出力については、別の記事で詳しく紹介したいと思う。
+例題: ファイル一覧を CSV 形式で出力する パイプ機能を利用する例として、次のようなケースを考えてみよう。
+❓ 課題
+次に示すディレクトリ構造をもつデータセットがあるとしよう。 （前回の記事で、例題として取り上げたデータセットと同じ構造だ）
+/home/me/dataset |-train/ | |-speaker_a/ | | |-speech_0001.wav | | |-speech_0002.wav | | ... | |-speaker_b/ | |-speaker_c/ | | ... | `-speaker_z/ `-validation/ |-speaker_a/ | |-speech_1001.wav | |-speech_1002.wav | ... |-speaker_b/ |-speaker_c/ | ... `-speaker_z/ このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。"><meta itemprop="datePublished" content="2023-05-28T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-05-28T00:00:00+00:00" />
+<meta itemprop="wordCount" content="421">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux コマンドラインのコンセプト: パイプ機能と tr コマンド"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第6回です。
+パイプ 前回の記事では、出力リダイレクトについて学んだ。 command &gt; /path/to/file のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。
+この記事では パイプ という機能と、パイプ機能でよく使う tr というコマンドを紹介する。
+パイプは、あるコマンドの出力を、別のコマンドの入力とする機能だ。 この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。
+Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。 格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。 パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。
+同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。 この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。
+📔 ノート
+画面に表示されるコマンドの出力を、専門的には「標準出力（STDOUT）」という。 また、コマンドへの入力のことを「標準入力（STDIN）」という。
+標準入出力については、別の記事で詳しく紹介したいと思う。
+例題: ファイル一覧を CSV 形式で出力する パイプ機能を利用する例として、次のようなケースを考えてみよう。
+❓ 課題
+次に示すディレクトリ構造をもつデータセットがあるとしよう。 （前回の記事で、例題として取り上げたデータセットと同じ構造だ）
+/home/me/dataset |-train/ | |-speaker_a/ | | |-speech_0001.wav | | |-speech_0002.wav | | ... | |-speaker_b/ | |-speaker_c/ | | ... | `-speaker_z/ `-validation/ |-speaker_a/ | |-speech_1001.wav | |-speech_1002.wav | ... |-speaker_b/ |-speaker_c/ | ... `-speaker_z/ このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。"/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">Linux コマンドラインのコンセプト: パイプ機能と tr コマンド</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-05-28T00:00:00Z">
+        
+        2023年5月28日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-6/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-6/&amp;text=Linux%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%83%a9%e3%82%a4%e3%83%b3%e3%81%ae%e3%82%b3%e3%83%b3%e3%82%bb%e3%83%97%e3%83%88:%20%e3%83%91%e3%82%a4%e3%83%97%e6%a9%9f%e8%83%bd%e3%81%a8%20tr%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第6回です。</p>
+<h2 id="パイプ">パイプ</h2>
+<p><a href="/posts/linux-ml-5">前回の記事</a>では、出力リダイレクトについて学んだ。
+<code>command &gt; /path/to/file</code> のように記述することで、コマンドの実行結果をファイルとして保存することができる、という機能だ。</p>
+<p>この記事では <strong>パイプ</strong> という機能と、パイプ機能でよく使う <code>tr</code> というコマンドを紹介する。</p>
+<p>パイプは、<strong>あるコマンドの出力を、別のコマンドの入力とする</strong>機能だ。
+この機能を使うと、複数のコマンドを組み合わせて、いろいろな処理を組み立てられるようになる。</p>
+<p>Linux のパイプラインの機能は、格闘ゲームのコンボ技と比較するとわかりやすいかもしれない。
+格闘ゲームでは、プレイヤーが特定のボタンの組み合わせを素早く押すと、コンボとよばれる連鎖攻撃を放つことができる。
+パンチやキックなどを連続させることで、単発の攻撃よりも強力なダメージを相手に与えられる。</p>
+<p>同様に、コマンドラインのパイプ機能を使うと、1つのコマンドの出力が次のコマンドに入力され、次のコマンドの「引き金」となる。
+この「コンボ」を成功させることで、単体のコマンドでは得られないさまざまな処理が実現できる。</p>
+<blockquote>
+<p><strong>📔 ノート</strong></p>
+<p>画面に表示されるコマンドの出力を、専門的には「<strong>標準出力（STDOUT）</strong>」という。
+また、コマンドへの入力のことを「<strong>標準入力（STDIN）</strong>」という。</p>
+<p>標準入出力については、別の記事で詳しく紹介したいと思う。</p>
+</blockquote>
+<h2 id="例題-ファイル一覧を-csv-形式で出力する">例題: ファイル一覧を CSV 形式で出力する</h2>
+<p>パイプ機能を利用する例として、次のようなケースを考えてみよう。</p>
+<blockquote>
+<p>❓ <strong>課題</strong></p>
+<p>次に示すディレクトリ構造をもつデータセットがあるとしよう。
+（<a href="/posts/linux-ml-5">前回の記事</a>で、例題として取り上げたデータセットと同じ構造だ）</p>
+<pre tabindex="0"><code>/home/me/dataset
+  |-train/
+  |   |-speaker_a/
+  |   |   |-speech_0001.wav
+  |   |   |-speech_0002.wav
+  |   |     ...
+  |   |-speaker_b/
+  |   |-speaker_c/
+  |   | ...
+  |   `-speaker_z/
+  `-validation/
+      |-speaker_a/
+      |   |-speech_1001.wav
+      |   |-speech_1002.wav
+      |     ...
+      |-speaker_b/
+      |-speaker_c/
+      | ...
+      `-speaker_z/
+</code></pre><p>このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。</p>
+<p>そこで、データセット内に含まれるすべての <code>wav</code> ファイルのパスを、次のように
+「trainまたはvalidation」、「話者」、「ファイル名」の3列をもつ CSV 形式で出力したい。
+どうすればいいだろうか？</p>
+<pre tabindex="0"><code>train,speaker_a,speech_0001.wav
+train,speaker_a,speech_0002.wav
+...
+validation,speaker_a,speech_1001.wav
+validation,speaker_a,speech_1002.wav
+...
+</code></pre></blockquote>
+<p>前回の記事では、<code>find</code> コマンドを使うことでファイルパスを一覧表示できることを学んだ。
+<code>find</code> の出力は、次のようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /home/me/dataset
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>課題で示された CSV の内容と <code>find</code> の出力を見比べると、それほど大きな違いがないことがわかると思う。
+具体的には、<code>find</code> の出力を次のように加工すれば、求められている CSV データが得られそうだ。</p>
+<blockquote>
+<p>🤔 <strong>必要な処理</strong></p>
+<ol>
+<li><code>find</code> が出力したファイルパスの <code>/</code> を <code>,</code> に置換する</li>
+<li>行の先頭にある <code>./</code> (置換後は <code>.,</code> になる) を削除する</li>
+</ol>
+</blockquote>
+<p>これら2つの処理は、それぞれ <code>tr</code> と <code>cut</code> というコマンドを使うことで実現できる。
+<code>cut</code> の紹介は次回の記事に譲るとして、まずは <code>tr</code> から見ていこう。</p>
+<h2 id="tr-コマンド"><code>tr</code> コマンド</h2>
+<p><code>tr</code> は、テキストデータから特定の文字を置換したり、削除したりするコマンドだ。
+このコマンドの基本的な使い方は、次のようになる。</p>
+<pre tabindex="0"><code>tr &lt;置換前の文字&gt; &lt;置換後の文字&gt;
+</code></pre><p>ここでは、<code>find</code> の出力に含まれる <code>/</code> を <code>,</code> に置換するので、次のようなコマンドになる。</p>
+<pre tabindex="0"><code>tr / ,
+</code></pre><p>置換機能のほかに、<code>tr</code> には文字を削除する機能もある。
+削除機能を使うには、<code>-d</code> オプションを使う。</p>
+<pre tabindex="0"><code>tr -d &lt;削除したい文字&gt;
+</code></pre><p>例えば、出力から <code>/</code> を削除したいならば、次のコマンドを実行すればいい。</p>
+<pre tabindex="0"><code>tr -d /
+</code></pre><p>ただ、このコマンドを単体で実行しただけでは、<code>find</code> の出力を <code>tr</code> で置換することはできない。
+<code>find</code> の出力と <code>tr</code> の入力をつなげることで、こうした処理ができるようになる。</p>
+<h2 id="パイプ-1">パイプ</h2>
+<p><code>find</code> の出力と <code>tr</code> の入力を接続するのに必要となるのが、<strong>パイプ機能</strong>だ。
+パイプの基本的な使い方は、次のようになる。</p>
+<pre tabindex="0"><code>command_1 | command_2
+</code></pre><p>このように、2つのコマンドの間を <code>|</code> 記号で区切ると、<code>command_1</code> コマンドの出力が <code>command_2</code> コマンドの入力に接続される。</p>
+<p>早速、<code>find</code> コマンドの出力を先ほど紹介した <code>tr</code> の入力に接続してみよう。
+具体的には、次のようなコマンドになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span> <span class="p">|</span> tr / ,
+</span></span><span class="line"><span class="cl"><span class="go">.,train,speaker_a,speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.,train,speaker_a,speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">.,validation,speaker_a,speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.,validation,speaker_a,speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>これを、<code>find</code> コマンド単体で実行した結果と比べてみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>両者を比べると、<code>find</code> の後ろに <code>tr</code> コマンドを連結することで、<code>/</code> という文字が <code>,</code> に置き換わっているのがわかると思う。
+これが、文字列を置換するという <code>tr</code> コマンドの効果だ。</p>
+<p>もし <code>/</code> を削除したい場合は、<code>find</code> コマンドに <code>tr -d /</code> をパイプ接続すればいい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span> <span class="p">|</span> tr -d /
+</span></span><span class="line"><span class="cl"><span class="go">.trainspeaker_aspeech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.trainspeaker_aspeech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">.validationspeaker_aspeech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.validationspeaker_aspeech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><h2 id="フィルタコマンド">フィルタコマンド</h2>
+<p><code>tr</code> コマンドは、これまで見てきた <code>cd</code> や <code>ls</code> などのコマンドと異なり、単体でコマンドを実行しただけでは何も起こらない。
+置換・削除する文字列を引数として指定したうえで、入力データを与える必要がある。
+<code>tr</code> はこの入力データを加工して、その結果を出力することに特化しているわけだ。</p>
+<p>Linux コマンドラインでは、<code>tr</code> コマンドのように<strong>入力データを受け取って加工するコマンド</strong>がいくつかある。
+例えば、<code>sort</code> というコマンドはデータの並べ替えができる。
+また、次回の記事で紹介する <code>cut</code> コマンドでは、文字列の一部を抽出することが可能だ。</p>
+<p>与えられたデータの加工に特化したこれらのコマンドは、<strong>フィルタコマンド</strong>とよばれる。
+フィルタコマンドを <code>find</code> のような通常のコマンドと組み合わせることで、さまざまな処理が実現できる。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>今回の記事では、Linux のパイプ機能と <code>tr</code> コマンドについて紹介した。</p>
+<p>パイプ機能は、GUI にないコマンドラインの大きな特徴の一つだ。
+GUI のアプリケーションは操作方法や結果表示がそれぞれ異なり、複数のアプリケーションを連携させることは難しい場合が多い。
+それに対して、CLI はパイプのようにプログラム間でデータを簡単に受け渡せる機能をもっており、多くのコマンドはテキスト形式での入出力に対応している。
+これにより、いろいろなコマンドを連携させて「コンボ技」を構築することが簡単にできる。</p>
+<p>今回はパイプと <code>tr</code> コマンドを用いた文字列の置換について説明したが、この処理はパイプラインによって実現できる機能のほんの一部にすぎない。
+次回は、<code>find</code>、<code>tr</code> と <code>cut</code> という3つのコマンドをパイプで組み合わせた、より複雑な処理を取り上げよう。
+これら3つのコマンドを組み合わせることで、例題で示した CSV データを出力できるようになる。</p>
+<p>それでは、次回の記事をお楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong>パイプ</strong>: あるコマンドの出力を、別のコマンドの入力とする機能</li>
+<li><strong><code>tr</code></strong>: 入力されたテキストデータから、特定の文字を置換・削除するコマンド
+<ul>
+<li><strong><code>tr / ,</code></strong>: 入力されたデータの <code>/</code> をすべて <code>,</code> に置き換える</li>
+<li><strong><code>tr -d /</code></strong>: 入力されたデータの <code>/</code> をすべて削除する</li>
+</ul>
+</li>
+<li><strong><code>find . -name '*.wav' | tr / ,</code></strong>: 次の処理をするコマンド
+<ol>
+<li>カレントディレクトリ以下にある、拡張子が <code>.wav</code> で終わるファイルを再帰的に検索する</li>
+<li>検索にヒットしたファイルパスに含まれる <code>/</code> を、すべて <code>,</code> に置き換えて出力する</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>パイプを使って、次の処理をするコマンドを構築しよう。
+<ul>
+<li><code>pwd</code> の出力に含まれる <code>/</code> という文字を、すべて <code>\</code> に置き換えて出力するコマンド
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">pwd</span>
+</span></span><span class="line"><span class="cl"><span class="go">/home/yumemio
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> （下記のような出力になるコマンドを構築する）
+</span></span><span class="line"><span class="cl"><span class="go">\home\yumemio
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div></li>
+<li><code>ls -l</code> の出力に含まれる <code>x</code> という文字を、すべて <code>@</code> に置き換えて出力するコマンド
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> ls -l
+</span></span><span class="line"><span class="cl"><span class="go">drwx------ 4 yumemio yumemio 4096  4月 29 12:35 snap
+</span></span></span><span class="line"><span class="cl"><span class="go">drwxr-xr-x 2 yumemio yumemio 4096  4月 23 13:48 ダウンロード
+</span></span></span><span class="line"><span class="cl"><span class="go">drwxr-xr-x 2 yumemio yumemio 4096  4月 23 13:48 テンプレート
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> （下記のような出力になるコマンドを構築する）
+</span></span><span class="line"><span class="cl"><span class="go">drw@------ 4 yumemio yumemio 4096  4月 29 12:35 snap
+</span></span></span><span class="line"><span class="cl"><span class="go">drw@r-@r-@ 2 yumemio yumemio 4096  4月 23 13:48 ダウンロード
+</span></span></span><span class="line"><span class="cl"><span class="go">drw@r-@r-@ 2 yumemio yumemio 4096  4月 23 13:48 テンプレート
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div></li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
