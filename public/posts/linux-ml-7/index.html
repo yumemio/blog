@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Linux コマンドラインのコンセプト: cut コマンド | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第7回です。
+前回の復習 前回の記事では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。 その際に、パイプ機能と tr コマンドを利用して、ファイルパスをCSVフォーマットに変換した。 しかし、出力の先頭に余分な文字（.,）が付いてしまっていた。
+今回は、この余分な文字を取り除くのに役立つ cut コマンドを学び、問題の解答となるコマンドを作成しよう。
+cut コマンド cut コマンドは、入力したテキストのそれぞれの行から一部だけを抽出するコマンドだ。
+抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。
+文字の位置を指定して抽出する cut に -c オプションを渡すと、文字の位置を指定して抽出することができる。
+find . -type f というコマンドの出力を cut でフィルタする場合を例として考えよう。 find コマンド単体の出力は次のとおりだ。
+$ find . -type f ./README.txt ./train/speaker_a/speech_0001.wav ./train/speaker_b/speech_0002.wav ./validation/speaker_a/speech_1001.wav ./validation/speaker_b/speech_1002.wav cut -c 3 をパイプでつなげると、出力の各行から3文字目だけを取得できる。
+$ find . -type f | cut -c 3 R t t v v ハイフン（-）を使うと、複数の文字を範囲指定することもできる。 例えば、次のように指定できる。
+-c -5 &mdash;&mdash; 各行の最初の文字から5文字目までを取得する -c 7-9 &mdash;&mdash; 各行の7〜9文字目を取得する $ find .">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Linux コマンドラインのコンセプト: cut コマンド" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第7回です。
+前回の復習 前回の記事では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。 その際に、パイプ機能と tr コマンドを利用して、ファイルパスをCSVフォーマットに変換した。 しかし、出力の先頭に余分な文字（.,）が付いてしまっていた。
+今回は、この余分な文字を取り除くのに役立つ cut コマンドを学び、問題の解答となるコマンドを作成しよう。
+cut コマンド cut コマンドは、入力したテキストのそれぞれの行から一部だけを抽出するコマンドだ。
+抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。
+文字の位置を指定して抽出する cut に -c オプションを渡すと、文字の位置を指定して抽出することができる。
+find . -type f というコマンドの出力を cut でフィルタする場合を例として考えよう。 find コマンド単体の出力は次のとおりだ。
+$ find . -type f ./README.txt ./train/speaker_a/speech_0001.wav ./train/speaker_b/speech_0002.wav ./validation/speaker_a/speech_1001.wav ./validation/speaker_b/speech_1002.wav cut -c 3 をパイプでつなげると、出力の各行から3文字目だけを取得できる。
+$ find . -type f | cut -c 3 R t t v v ハイフン（-）を使うと、複数の文字を範囲指定することもできる。 例えば、次のように指定できる。
+-c -5 &mdash;&mdash; 各行の最初の文字から5文字目までを取得する -c 7-9 &mdash;&mdash; 各行の7〜9文字目を取得する $ find ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-7/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-06-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-06-04T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="Linux コマンドラインのコンセプト: cut コマンド">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第7回です。
+前回の復習 前回の記事では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。 その際に、パイプ機能と tr コマンドを利用して、ファイルパスをCSVフォーマットに変換した。 しかし、出力の先頭に余分な文字（.,）が付いてしまっていた。
+今回は、この余分な文字を取り除くのに役立つ cut コマンドを学び、問題の解答となるコマンドを作成しよう。
+cut コマンド cut コマンドは、入力したテキストのそれぞれの行から一部だけを抽出するコマンドだ。
+抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。
+文字の位置を指定して抽出する cut に -c オプションを渡すと、文字の位置を指定して抽出することができる。
+find . -type f というコマンドの出力を cut でフィルタする場合を例として考えよう。 find コマンド単体の出力は次のとおりだ。
+$ find . -type f ./README.txt ./train/speaker_a/speech_0001.wav ./train/speaker_b/speech_0002.wav ./validation/speaker_a/speech_1001.wav ./validation/speaker_b/speech_1002.wav cut -c 3 をパイプでつなげると、出力の各行から3文字目だけを取得できる。
+$ find . -type f | cut -c 3 R t t v v ハイフン（-）を使うと、複数の文字を範囲指定することもできる。 例えば、次のように指定できる。
+-c -5 &mdash;&mdash; 各行の最初の文字から5文字目までを取得する -c 7-9 &mdash;&mdash; 各行の7〜9文字目を取得する $ find ."><meta itemprop="datePublished" content="2023-06-04T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-06-04T00:00:00+00:00" />
+<meta itemprop="wordCount" content="453">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux コマンドラインのコンセプト: cut コマンド"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第7回です。
+前回の復習 前回の記事では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。 その際に、パイプ機能と tr コマンドを利用して、ファイルパスをCSVフォーマットに変換した。 しかし、出力の先頭に余分な文字（.,）が付いてしまっていた。
+今回は、この余分な文字を取り除くのに役立つ cut コマンドを学び、問題の解答となるコマンドを作成しよう。
+cut コマンド cut コマンドは、入力したテキストのそれぞれの行から一部だけを抽出するコマンドだ。
+抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。
+文字の位置を指定して抽出する cut に -c オプションを渡すと、文字の位置を指定して抽出することができる。
+find . -type f というコマンドの出力を cut でフィルタする場合を例として考えよう。 find コマンド単体の出力は次のとおりだ。
+$ find . -type f ./README.txt ./train/speaker_a/speech_0001.wav ./train/speaker_b/speech_0002.wav ./validation/speaker_a/speech_1001.wav ./validation/speaker_b/speech_1002.wav cut -c 3 をパイプでつなげると、出力の各行から3文字目だけを取得できる。
+$ find . -type f | cut -c 3 R t t v v ハイフン（-）を使うと、複数の文字を範囲指定することもできる。 例えば、次のように指定できる。
+-c -5 &mdash;&mdash; 各行の最初の文字から5文字目までを取得する -c 7-9 &mdash;&mdash; 各行の7〜9文字目を取得する $ find ."/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">Linux コマンドラインのコンセプト: cut コマンド</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-06-04T00:00:00Z">
+        
+        2023年6月4日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-7/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-7/&amp;text=Linux%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%83%a9%e3%82%a4%e3%83%b3%e3%81%ae%e3%82%b3%e3%83%b3%e3%82%bb%e3%83%97%e3%83%88:%20cut%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第7回です。</p>
+<h2 id="前回の復習">前回の復習</h2>
+<p><a href="/posts/linux-ml-6">前回の記事</a>では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。
+その際に、パイプ機能と <code>tr</code> コマンドを利用して、ファイルパスをCSVフォーマットに変換した。
+しかし、出力の先頭に余分な文字（<code>.,</code>）が付いてしまっていた。</p>
+<p>今回は、この余分な文字を取り除くのに役立つ <code>cut</code> コマンドを学び、問題の解答となるコマンドを作成しよう。</p>
+<h2 id="cut-コマンド"><code>cut</code> コマンド</h2>
+<p><code>cut</code> コマンドは、<strong>入力したテキストのそれぞれの行から一部だけを抽出する</strong>コマンドだ。</p>
+<p>抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。</p>
+<h3 id="文字の位置を指定して抽出する">文字の位置を指定して抽出する</h3>
+<p><code>cut</code> に <code>-c</code> オプションを渡すと、文字の位置を指定して抽出することができる。</p>
+<p><code>find . -type f</code> というコマンドの出力を <code>cut</code> でフィルタする場合を例として考えよう。
+<code>find</code> コマンド単体の出力は次のとおりだ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f
+</span></span><span class="line"><span class="cl"><span class="go">./README.txt
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/speaker_b/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_b/speech_1002.wav
+</span></span></span></code></pre></div><p><code>cut -c 3</code> をパイプでつなげると、出力の各行から3文字目だけを取得できる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -c <span class="m">3</span>
+</span></span><span class="line"><span class="cl"><span class="go">R
+</span></span></span><span class="line"><span class="cl"><span class="go">t
+</span></span></span><span class="line"><span class="cl"><span class="go">t
+</span></span></span><span class="line"><span class="cl"><span class="go">v
+</span></span></span><span class="line"><span class="cl"><span class="go">v
+</span></span></span></code></pre></div><p>ハイフン（<code>-</code>）を使うと、複数の文字を範囲指定することもできる。
+例えば、次のように指定できる。</p>
+<ul>
+<li><code>-c -5</code> &mdash;&mdash; 各行の<strong>最初の文字から5文字目まで</strong>を取得する</li>
+<li><code>-c 7-9</code> &mdash;&mdash; 各行の<strong>7〜9文字目</strong>を取得する</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -c 7-9
+</span></span><span class="line"><span class="cl"><span class="go">ME.
+</span></span></span><span class="line"><span class="cl"><span class="go">n/s
+</span></span></span><span class="line"><span class="cl"><span class="go">n/s
+</span></span></span><span class="line"><span class="cl"><span class="go">dat
+</span></span></span><span class="line"><span class="cl"><span class="go">dat
+</span></span></span></code></pre></div><p>複数の位置を指定したい場合は、カンマ（<code>,</code>）で位置指定を区切る。
+例えば、下記のような指定のしかたが可能だ。</p>
+<ul>
+<li><code>-c 12,15-</code> &mdash;&mdash; 各行の<strong>12文字目と15文字目以降</strong>を取得する</li>
+<li><code>-c -3,5-8,10-</code> &mdash;&mdash; 各行の<strong>4文字目と9文字目以外すべて</strong>を取得する</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -c 12,15-
+</span></span><span class="line"><span class="cl"><span class="go">t
+</span></span></span><span class="line"><span class="cl"><span class="go">ar_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">ar_b/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">npeaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">npeaker_b/speech_1002.wav
+</span></span></span></code></pre></div><p><code>cut -c</code> の指定のしかたを図で表すと、次のようになる。</p>
+<p><img src="/images/lmle/7-cut/cut_option_c.png" alt="cut コマンドの -c オプションの指定のしかた"></p>
+<h3 id="列を指定して抽出する">列を指定して抽出する</h3>
+<p><code>-f</code> オプションを使うと、CSVフォーマットのように<strong>特定の文字で列を区切ったテキストから、指定した列の値を抽出</strong>できる。
+区切り文字は <code>-d</code> オプションを使って指定できる。</p>
+<p>先ほどと同様に、<code>find</code> コマンドの出力をフィルタする例を使って考えよう。</p>
+<p><code>find</code> の出力はファイルパスだ。
+パスはスラッシュ（<code>/</code>）を区切り文字としているから、<code>-d /</code> とすれば、各ファイルパスを <code>/</code> で区切った列として扱えるようになる。</p>
+<p>まずは、<code>cut -d / -f 1</code> で最初の列を抽出してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -d / -f <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="go">.
+</span></span></span><span class="line"><span class="cl"><span class="go">.
+</span></span></span><span class="line"><span class="cl"><span class="go">.
+</span></span></span><span class="line"><span class="cl"><span class="go">.
+</span></span></span><span class="line"><span class="cl"><span class="go">.
+</span></span></span></code></pre></div><p>全部 <code>.</code> になってしまった。
+これは、<code>find</code> が出力した各行の先頭に <code>./</code> がついているからだ。</p>
+<p>2番目の列を抽出すると（<code>-f 2</code>）、もっと意味のあるデータが得られる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -d / -f <span class="m">2</span>
+</span></span><span class="line"><span class="cl"><span class="go">README.txt
+</span></span></span><span class="line"><span class="cl"><span class="go">train
+</span></span></span><span class="line"><span class="cl"><span class="go">train
+</span></span></span><span class="line"><span class="cl"><span class="go">validation
+</span></span></span><span class="line"><span class="cl"><span class="go">validation
+</span></span></span></code></pre></div><p>各ファイルパスの2列目の値、つまりカレントディレクトリ直下のファイル名（ディレクトリ名）が得られた。</p>
+<p><code>-c</code> オプションと同様に、<code>-f</code> オプションでもコンマ（<code>,</code>）による複数列の指定や、ハイフン（<code>-</code>）を使った範囲指定ができる。
+例えば、3列目と4列目の値だけを抽出したいときは、<code>-f 3,4</code> か <code>-f 3-4</code> と指定すればよい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -type f <span class="p">|</span> cut -d / -f 3-4
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="go">speaker_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">speaker_b/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">speaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">speaker_b/speech_1002.wav
+</span></span></span></code></pre></div><p>ちなみに、<code>-d</code> オプションを指定しないで <code>-f</code> オプションだけを指定した場合は、<strong>タブ記号</strong>（キーボードの Tab キーを押すと入力される空白文字）が区切り文字となる。</p>
+<p><img src="/images/lmle/7-cut/cut_option_f.png" alt="cut コマンドの -f オプションの指定のしかた"></p>
+<h2 id="例題の解答">例題の解答</h2>
+<p>これで、<a href="/posts/linux-ml-6">前回の記事</a>で示した例題を解くために必要な3つの要素 &mdash;&mdash; パイプ機能、<code>tr</code> コマンド、<code>cut</code> コマンド &mdash;&mdash; が揃った。</p>
+<p>復習も兼ねて、前回の例題を再掲しよう。</p>
+<blockquote>
+<p>❓ <strong>課題</strong></p>
+<p>次に示すディレクトリ構造をもつデータセットがあるとしよう。</p>
+<pre tabindex="0"><code>/home/me/dataset
+  |-train/
+  |   |-speaker_a/
+  |   |   |-speech_0001.wav
+  |   |   |-speech_0002.wav
+  |   |     ...
+  |   |-speaker_b/
+  |   |-speaker_c/
+  |   | ...
+  |   `-speaker_z/
+  `-validation/
+      |-speaker_a/
+      |   |-speech_1001.wav
+      |   |-speech_1002.wav
+      |     ...
+      |-speaker_b/
+      |-speaker_c/
+      | ...
+      `-speaker_z/
+</code></pre><p>このデータセットの構成を、他のプログラム（Excel など）を使って分析したい。</p>
+<p>そこで、データセット内に含まれるすべての <code>wav</code> ファイルのパスを、次のように
+「trainまたはvalidation」、「話者」、「ファイル名」の3列をもつ CSV 形式で出力したい。
+どうすればいいだろうか？</p>
+<pre tabindex="0"><code>train,speaker_a,speech_0001.wav
+train,speaker_a,speech_0002.wav
+...
+validation,speaker_a,speech_1001.wav
+validation,speaker_a,speech_1002.wav
+...
+</code></pre></blockquote>
+<p>前回の記事では、次のように <code>find</code> と <code>tr</code> をパイプでつなぐことで、必要なCSVデータに近い出力が得られる、ということを学んだ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /home/me/dataset
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span> <span class="p">|</span> tr / ,
+</span></span><span class="line"><span class="cl"><span class="go">.,train,speaker_a,speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.,train,speaker_a,speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">.,validation,speaker_a,speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">.,validation,speaker_a,speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>各行の先頭に <code>.,</code> という余分な文字がくっついているが、<code>cut</code> コマンドを使えばこれを除去できる。
+<code>tr</code> の出力をカンマ区切りのテキストと見なして、2列目以降の値だけを抽出すれば、課題で提示されたフォーマットどおりの出力が得られそうだ。</p>
+<p>実際に、<code>tr</code> の後ろに <code>cut</code> をつなげてみよう。
+カンマ区切りのテキストから2列目以降を抽出するコマンドは <code>cut -d , -f 2-</code> だ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span> <span class="p">|</span> tr / , <span class="p">|</span> cut -d , -f 2-
+</span></span><span class="line"><span class="cl"><span class="go">train,speaker_a,speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">train,speaker_a,speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">validation,speaker_a,speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">validation,speaker_a,speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>フォーマットどおりの出力ができた。</p>
+<p><a href="/posts/linux-ml-5">出力リダイレクト</a> を使って出力をファイルに保存すれば、Excel などのアプリで結果を集計・分析できる。
+<code>dataset.csv</code> というファイル名で保存しておこう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span> <span class="p">|</span> tr / , <span class="p">|</span> cut -d , -f 2- &gt; dataset.csv
+</span></span></code></pre></div><p>ちょっと長いコマンドだが、要素ごとに見ていくと次のようになる。</p>
+<ul>
+<li><code>find</code> &mdash;&mdash; カレントディレクトリ以下の、拡張子が <code>.wav</code> のファイルを検索する</li>
+<li><code>tr</code> &mdash;&mdash; ファイルパスの <code>/</code> を <code>,</code> に置換する</li>
+<li><code>cut</code> &mdash;&mdash; カンマ区切りの2列目以降を抽出する</li>
+<li><code>&gt; dataset.csv</code> &mdash;&mdash; <code>cut</code> コマンドの出力を <code>dataset.csv</code> に保存する</li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>前回と今回の記事では、「ファイルパスをCSVに変換し、ファイルに保存する」という作業を題材として、<code>find</code>、<code>tr</code>、<code>cut</code> という3つのコマンドを組み合わせたパイプラインを構築した。</p>
+<p>今回は2つのフィルタコマンド &mdash;&mdash;<code>tr</code> コマンドと <code>cut</code> コマンド&mdash;&mdash;を紹介したが、Linux にはこれ以外にもたくさんのフィルタコマンドが用意されている。
+それぞれのフィルタがもつ機能は単純だが、必要な機能を選んでパイプで組み合わせれば、高度な処理ができるようになる。
+こうした複雑な操作ができるのは、CLI ユーザの特権と言ってもいい。</p>
+<p>ここまではテキストデータの操作を中心に見てきたが、<a href="/posts/linux-ml-1">連載の初回</a>で触れたように、Linux コマンドラインを使えば画像や映像などのマルチメディアも操作できる。
+次回以降は、Linux を使った画像処理の例をみていこう。</p>
+<p>それでは、次回の記事もお楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong><code>cut</code></strong>: 入力されたデータの各行から、指定した位置または列にある文字を抽出するコマンド
+<ul>
+<li><strong><code>cut -c 3</code></strong>: 各行の3文字目だけを抽出する</li>
+<li><strong><code>cut -d / -f 3-4</code></strong>: 各行をスラッシュ (<code>/</code>) で区切り、3〜4列目を抽出する</li>
+</ul>
+</li>
+<li><strong><code>find . -name '*.wav' | tr / , | cut -d , -f 2-</code></strong>: 次の処理をするコマンド
+<ol>
+<li>カレントディレクトリ以下にある、拡張子が <code>.wav</code> で終わるファイルを再帰的に検索する</li>
+<li>検索にヒットしたファイルパスに含まれる <code>/</code> を、すべて <code>,</code> に置き換える</li>
+<li>カンマ区切りの2列目以降を抽出する</li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>記事の本文で示した例題をもとに、「WAVファイルのファイル番号」だけを抽出するコマンドを作成してみよう。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /home/me/dataset
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.wav&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/speaker_a/speech_0002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1001.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">./validation/speaker_a/speech_1002.wav
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> （下記の出力をもつコマンドを作成する）
+</span></span><span class="line"><span class="cl"><span class="go">0001
+</span></span></span><span class="line"><span class="cl"><span class="go">0002
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go">1001
+</span></span></span><span class="line"><span class="cl"><span class="go">1002
+</span></span></span></code></pre></div></li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

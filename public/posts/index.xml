@@ -9,6 +9,24 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Linux コマンドラインのコンセプト: cut コマンド</title>
+      <link>https://yumem.io/posts/linux-ml-7/</link>
+      <pubDate>Sun, 04 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-7/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第7回です。
+前回の復習 前回の記事では、「データセット内のファイル一覧をCSV形式で出力する」という問題を考えた。 その際に、パイプ機能と tr コマンドを利用して、ファイルパスをCSVフォーマットに変換した。 しかし、出力の先頭に余分な文字（.,）が付いてしまっていた。
+今回は、この余分な文字を取り除くのに役立つ cut コマンドを学び、問題の解答となるコマンドを作成しよう。
+cut コマンド cut コマンドは、入力したテキストのそれぞれの行から一部だけを抽出するコマンドだ。
+抽出のしかたには、「文字の位置を指定する方法」と「列を指定する方法」の2通りがある。
+文字の位置を指定して抽出する cut に -c オプションを渡すと、文字の位置を指定して抽出することができる。
+find . -type f というコマンドの出力を cut でフィルタする場合を例として考えよう。 find コマンド単体の出力は次のとおりだ。
+$ find . -type f ./README.txt ./train/speaker_a/speech_0001.wav ./train/speaker_b/speech_0002.wav ./validation/speaker_a/speech_1001.wav ./validation/speaker_b/speech_1002.wav cut -c 3 をパイプでつなげると、出力の各行から3文字目だけを取得できる。
+$ find . -type f | cut -c 3 R t t v v ハイフン（-）を使うと、複数の文字を範囲指定することもできる。 例えば、次のように指定できる。
+-c -5 &amp;mdash;&amp;mdash; 各行の最初の文字から5文字目までを取得する -c 7-9 &amp;mdash;&amp;mdash; 各行の7〜9文字目を取得する $ find .</description>
+    </item>
+    
+    <item>
       <title>Linux コマンドラインのコンセプト: パイプ機能と tr コマンド</title>
       <link>https://yumem.io/posts/linux-ml-6/</link>
       <pubDate>Sun, 28 May 2023 00:00:00 +0000</pubDate>
