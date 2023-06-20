@@ -257,33 +257,3 @@ $ convert train/00000000.JPG -resize '256x256!' thumbnails/thumbnail_00000000.JP
 >   1. ```console
 >      $ convert input.jpg -bordercolor limegreen -border 5 -blur 15x5 output.png
 >      ```
----
-
-## ImageMagick のインストール
-
-ImageMagick はOSに付属している場合も多いが、そうでない場合は手動でのインストールが必要だ。
-
-ImageMagick がインストールされているかどうかは、`identify` コマンドを実行することで確認できる。
-下記のような結果になれば、ImageMagick がインストールされていない。
-
-```console
-$ identify
-コマンド 'identify' が見つかりません。次の方法でインストールできます:
-sudo apt install graphicsmagick-imagemagick-compat  # version 1.4+really1.3.38-1ubuntu0.1, or
-sudo apt install imagemagick-6.q16                  # version 8:6.9.11.60+dfsg-1.3ubuntu0.22.04.3
-sudo apt install imagemagick-6.q16hdri              # version 8:6.9.11.60+dfsg-1.3ubuntu0.22.04.3
-```
-
-インストールには、OS標準のパッケージ管理ソフトを使用しよう。
-Ubuntu の場合、`apt` を使ってインストールできる。
-
-```console
-$ sudo apt install 
-```
-
-> `identify` がインストールされていない場合は、
-> Ubuntu の場合、
-> ```console
-> $ sudo apt update
-> $ sudo apt install 
-> ```
