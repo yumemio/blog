@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Linux コマンドラインのコンセプト: ImageMagick | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第8回です。
+前回の復習 前回の記事までで、 find、tr、cut コマンドを組み合わせたパイプ処理を紹介した。
+今回からは、パイプ機能を使った別の例として、find コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。
+この記事では ImageMagick の使い方を紹介し、次回の記事では find と ImageMagick を組み合わせる方法を考えていく。
+ImageMagick とは？ ImageMagick は、コマンドライン上で利用できる画像編集ツール群だ。 画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。
+ImageMagick は単体のツールではなく、convert（画像加工コマンド）、mogrify（画像の上書き編集コマンド）、identify（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。
+その中核をなすのが convert（バージョン7では magick）コマンドだ。 このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。
+📔 ノート
+ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。 最新のバージョン7では convert コマンドの名前が magick になる、という大きな変化があった。 このため、最新の ImageMagick 公式ドキュメントでは magick コマンドの利用が前提となっている。
+それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い バージョン6 の ImageMagick がプリインストールされている場合がある。
+本稿では、ImageMagick v6 の convert コマンドを前提としているが、ImageMagick v7 がインストールされた環境では convert を magick に適宜読み替えてほしい。
+$ # ImageMagick v6 のコマンド例 $ convert input.">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Linux コマンドラインのコンセプト: ImageMagick" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第8回です。
+前回の復習 前回の記事までで、 find、tr、cut コマンドを組み合わせたパイプ処理を紹介した。
+今回からは、パイプ機能を使った別の例として、find コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。
+この記事では ImageMagick の使い方を紹介し、次回の記事では find と ImageMagick を組み合わせる方法を考えていく。
+ImageMagick とは？ ImageMagick は、コマンドライン上で利用できる画像編集ツール群だ。 画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。
+ImageMagick は単体のツールではなく、convert（画像加工コマンド）、mogrify（画像の上書き編集コマンド）、identify（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。
+その中核をなすのが convert（バージョン7では magick）コマンドだ。 このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。
+📔 ノート
+ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。 最新のバージョン7では convert コマンドの名前が magick になる、という大きな変化があった。 このため、最新の ImageMagick 公式ドキュメントでは magick コマンドの利用が前提となっている。
+それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い バージョン6 の ImageMagick がプリインストールされている場合がある。
+本稿では、ImageMagick v6 の convert コマンドを前提としているが、ImageMagick v7 がインストールされた環境では convert を magick に適宜読み替えてほしい。
+$ # ImageMagick v6 のコマンド例 $ convert input." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-8/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-06-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-06-20T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="Linux コマンドラインのコンセプト: ImageMagick">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第8回です。
+前回の復習 前回の記事までで、 find、tr、cut コマンドを組み合わせたパイプ処理を紹介した。
+今回からは、パイプ機能を使った別の例として、find コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。
+この記事では ImageMagick の使い方を紹介し、次回の記事では find と ImageMagick を組み合わせる方法を考えていく。
+ImageMagick とは？ ImageMagick は、コマンドライン上で利用できる画像編集ツール群だ。 画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。
+ImageMagick は単体のツールではなく、convert（画像加工コマンド）、mogrify（画像の上書き編集コマンド）、identify（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。
+その中核をなすのが convert（バージョン7では magick）コマンドだ。 このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。
+📔 ノート
+ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。 最新のバージョン7では convert コマンドの名前が magick になる、という大きな変化があった。 このため、最新の ImageMagick 公式ドキュメントでは magick コマンドの利用が前提となっている。
+それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い バージョン6 の ImageMagick がプリインストールされている場合がある。
+本稿では、ImageMagick v6 の convert コマンドを前提としているが、ImageMagick v7 がインストールされた環境では convert を magick に適宜読み替えてほしい。
+$ # ImageMagick v6 のコマンド例 $ convert input."><meta itemprop="datePublished" content="2023-06-20T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-06-20T00:00:00+00:00" />
+<meta itemprop="wordCount" content="407">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux コマンドラインのコンセプト: ImageMagick"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第8回です。
+前回の復習 前回の記事までで、 find、tr、cut コマンドを組み合わせたパイプ処理を紹介した。
+今回からは、パイプ機能を使った別の例として、find コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。
+この記事では ImageMagick の使い方を紹介し、次回の記事では find と ImageMagick を組み合わせる方法を考えていく。
+ImageMagick とは？ ImageMagick は、コマンドライン上で利用できる画像編集ツール群だ。 画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。
+ImageMagick は単体のツールではなく、convert（画像加工コマンド）、mogrify（画像の上書き編集コマンド）、identify（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。
+その中核をなすのが convert（バージョン7では magick）コマンドだ。 このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。
+📔 ノート
+ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。 最新のバージョン7では convert コマンドの名前が magick になる、という大きな変化があった。 このため、最新の ImageMagick 公式ドキュメントでは magick コマンドの利用が前提となっている。
+それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い バージョン6 の ImageMagick がプリインストールされている場合がある。
+本稿では、ImageMagick v6 の convert コマンドを前提としているが、ImageMagick v7 がインストールされた環境では convert を magick に適宜読み替えてほしい。
+$ # ImageMagick v6 のコマンド例 $ convert input."/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">Linux コマンドラインのコンセプト: ImageMagick</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-06-20T00:00:00Z">
+        
+        2023年6月20日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-8/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-8/&amp;text=Linux%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%83%a9%e3%82%a4%e3%83%b3%e3%81%ae%e3%82%b3%e3%83%b3%e3%82%bb%e3%83%97%e3%83%88:%20ImageMagick" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第8回です。</p>
+<h2 id="前回の復習">前回の復習</h2>
+<p><a href="/posts/linux-ml-7">前回の記事</a>までで、 <code>find</code>、<code>tr</code>、<code>cut</code> コマンドを組み合わせたパイプ処理を紹介した。</p>
+<p>今回からは、パイプ機能を使った別の例として、<code>find</code> コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。</p>
+<p>この記事では ImageMagick の使い方を紹介し、次回の記事では <code>find</code> と ImageMagick を組み合わせる方法を考えていく。</p>
+<h2 id="imagemagick-とは">ImageMagick とは？</h2>
+<p>ImageMagick は、<strong>コマンドライン上で利用できる画像編集ツール群</strong>だ。
+画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。</p>
+<p>ImageMagick は単体のツールではなく、<code>convert</code>（画像加工コマンド）、<code>mogrify</code>（画像の上書き編集コマンド）、<code>identify</code>（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。</p>
+<p>その中核をなすのが <code>convert</code>（バージョン7では <code>magick</code>）コマンドだ。
+このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。</p>
+<blockquote>
+<p><strong>📔 ノート</strong></p>
+<p>ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。
+最新の<strong>バージョン7</strong>では <code>convert</code> コマンドの名前が <code>magick</code> になる、という大きな変化があった。
+このため、最新の ImageMagick 公式ドキュメントでは <code>magick</code> コマンドの利用が前提となっている。</p>
+<p>それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い <strong>バージョン6</strong> の ImageMagick がプリインストールされている場合がある。</p>
+<p>本稿では、ImageMagick v6 の <code>convert</code> コマンドを前提としているが、ImageMagick v7 がインストールされた環境では <code>convert</code> を <code>magick</code> に適宜読み替えてほしい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ImageMagick v6 のコマンド例</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert input.jpg -rotate <span class="m">30</span> output.png
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ImageMagick v7 での、同等のコマンド</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> magick input.jpg -rotate <span class="m">30</span> output.png
+</span></span></code></pre></div><p>なお、インストールされている ImageMagick のバージョンは、下記のコマンドで確認できる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> identify --version
+</span></span><span class="line"><span class="cl"><span class="go">Version: ImageMagick 6.9.10-23 Q16 x86_64 20190101 https://imagemagick.org
+</span></span></span></code></pre></div></blockquote>
+<h2 id="convert-を使った画像加工"><code>convert</code> を使った画像加工</h2>
+<p>それでは、<code>convert</code> (<code>magick</code>) コマンドを使って画像を加工する方法を見ていこう。</p>
+<p><code>convert</code> を使った画像処理の流れは、次のようになる。</p>
+<ol>
+<li>ある画像を<strong>入力ファイル</strong>として受け取り、</li>
+<li><strong>操作</strong>（回転やぼかしなど）をして、</li>
+<li><strong>出力ファイル</strong>に、操作を適用した画像を書き出す。</li>
+</ol>
+<p>入力ファイルを指定せずにCGを作成する場合や、複数の画像を扱う場合もあるが、まずは基本的な「入力」→「操作」→「出力」の流れをおさえておこう。</p>
+<p><code>convert</code> コマンドの基本的な文法は、次のようになっている。</p>
+<pre tabindex="0"><code>convert 入力ファイル [オペレータ] 出力ファイル
+</code></pre><p>回転やぼかしなどの操作・処理は「<strong>オペレータ</strong>」を使って指定する。
+例えば <code>-blur</code> を指定すればぼかし処理、 <code>-border</code> ならば枠線をつける処理、といった具合になる。
+オペレータには、ぼかしの度合いや縁の幅などの設定情報をつけることもできる。</p>
+<p>例えば、次のコマンドは 「<code>input.jpg</code> というファイルを読み込み、時計回りに30度回転して、<code>output.png</code> として書き出す」という意味になる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.jpg -rotate <span class="m">30</span> output.png
+</span></span></code></pre></div><p>1つの <code>convert</code> コマンドで、複数の操作・処理をすることもできる。
+例えば、次のコマンドでは「画像をぼかす処理」と「緑色の枠線を追加する処理」が順番に適用される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.jpg -blur 15x5 -bordercolor limegreen -border <span class="m">5</span> output.png
+</span></span></code></pre></div><p><img src="/images/lmle/8-imagemagick/convert_info_1.png" alt="convert を使った画像加工処理の流れとコマンド例"></p>
+<p><img src="/images/lmle/8-imagemagick/convert_info_2.png" alt="1つの convert コマンド内で、複数の操作・処理をするのもOK"></p>
+<p><code>convert</code> コマンドのオプションやオペレータはとても数が多く、この記事ですべてを紹介することはできない。
+詳細な使い方は<a href="https://imagemagick.org/script/command-line-processing.php">公式ドキュメント</a>や、有志による日本語チュートリアル（<a href="https://imagemagick.biz/">Imagemagick の使い方日本語マニュアル</a>、<a href="https://pen.envr.tsukuba.ac.jp/~torarimon/?Imagemagick">とらりもん</a>など）を参照してほしい。</p>
+<h2 id="convert-の使用例"><code>convert</code> の使用例</h2>
+<p>ここでは、<code>convert</code> の代表的な利用例として「画像フォーマットの変換」と「画像のリサイズ」の2つを紹介する。</p>
+<h3 id="画像フォーマット変換">画像フォーマット変換</h3>
+<p><code>convert</code> のよくある使い方の1つは、画像のフォーマットを変換する、というものだ。</p>
+<p>例えば、BMP 画像を PNG 形式に変換したいとしよう。
+この場合、入力ファイルに BMP 画像の名前、出力ファイルに書き出す PNG 画像の名前を指定すると、変換ができる。
+画像の加工はしないので、オペレータはつけなくてよい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert ./digit.bmp ./digit.png
+</span></span></code></pre></div><p>これで、BMP 画像が PNG 形式に変換される。</p>
+<p>ImageMagick は、たくさんの画像フォーマットをサポートしている (<a href="https://imagemagick.org/script/formats.php#supported">一覧</a>)。</p>
+<blockquote>
+<p><strong>📔 ノート</strong></p>
+<p>ImageMagick は非常に多くのフォーマットに対応しているが、裏を返せば、画像の読み込み・書き出しに関係する脆弱性が生じやすい。
+このため、ImageMagick ではデフォルトで <strong>一部のファイル形式が無効化</strong> されている。</p>
+<p>例えば、PDF 形式や EPS 形式のファイルを読み書きしようとすると、下記のようにエラーになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert ./sunset.png ./sunset.pdf
+</span></span><span class="line"><span class="cl"><span class="go">convert-im6.q16: attempt to perform an operation not allowed by the security policy `PDF&#39; @ error/constitute.c/IsCoderAuthorized/408.
+</span></span></span></code></pre></div><p>ImageMagick のセキュリティ設定は <code>policy.xml</code> というファイルに記載されており、これを書き換えることでエラーを回避できる。</p>
+<p>設定の詳細については<a href="https://imagemagick.org/script/security-policy.php">ImageMagick公式ドキュメント</a>、ファイル形式以外の設定項目については<a href="https://techlife.cookpad.com/entry/2016/05/18/180703">クックパッド開発者ブログ</a>、ImageMagick の脆弱性については<a href="https://qiita.com/yoya/items/2076c1f5137d4041e3aa">yoya氏の考察</a>が詳しい。</p>
+</blockquote>
+<h3 id="画像のリサイズ">画像のリサイズ</h3>
+<p>画像のリサイズ（拡大や縮小）をするのも、<code>convert</code> を使って行われることの多い処理のひとつだ。</p>
+<p>画像をリサイズするには <code>-resize</code> オペレータを使用する。オペレータの後ろに、縮小後のサイズを指定する。</p>
+<p>試しに、画像を縦・横 128 ピクセルになるよう縮小してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert image.png -resize 128x128 thumbnail.png
+</span></span></code></pre></div><p><img src="/images/lmle/8-imagemagick/convert_resize_wo_exclamation.png" alt="アスペクト比を維持して縮小した場合の、処理前後の画像"></p>
+<p>正方形ではなく、もとの縦横比を保った縮小画像が出力されてしまった。</p>
+<p>実は、縮小後のサイズを<code>128x128</code> に指定すると「<strong>アスペクト比を維持したまま</strong>128×128px の枠内に収まるように画像を縮小する」という意味になってしまう。</p>
+<p>アスペクト比を無視して128px四方に縮小したい場合、<strong>サイズ指定の最後に <code>!</code> をつける</strong>。
+また、この場合はサイズをシングルクォート（<code>'</code>）で囲む必要がある（その理由については、べつの記事で説明したい）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert image.png -resize <span class="s1">&#39;128x128!&#39;</span> thumbnail.png
+</span></span></code></pre></div><p><img src="/images/lmle/8-imagemagick/convert_resize_with_exclamation.png" alt="アスペクト比を無視して縮小した場合の、処理前後の画像"></p>
+<p>これで、意図した通りに画像が縮小された。
+なお、サイズ指定の方法はこの他にもいろいろある。<a href="https://imagemagick.org/script/command-line-processing.php#geometry">ImageMagick公式ドキュメント</a>で詳しく説明されているので、興味のある方は参照してほしい。</p>
+<h2 id="例題">例題</h2>
+<p>機械学習の分野で <code>convert</code> コマンドを使うケースとして、次のような課題を考えてみよう。</p>
+<blockquote>
+<p><strong>❓ 課題</strong></p>
+<p>次のようなディレクトリ構造をもつ画像データセットがあるとしよう。</p>
+<pre tabindex="0"><code>dataset
+  |-thumbnails/
+  |-train/
+  |   |-00000000.JPG
+  |   |-00000001.JPG
+  |   |-00000002.JPG
+  |   | ...
+  |   `-00009999.JPG
+  `-val/
+      |-00010000.JPG
+      |-00010001.JPG
+      |-00010002.JPG
+      | ...
+      `-00010999.JPG
+</code></pre><p><code>dataset/train</code> と <code>dataset/val</code> ディレクトリの下にあるすべての画像ファイルを縮小して、<code>dataset/thumbnails</code>ディレクトリに保存したい。</p>
+<p>縮小した画像は幅・高さとも 256px とし、次のように <code>thumbnails/</code> の直下に保存したいとしよう。</p>
+<pre tabindex="0"><code>dataset
+  |-thumbnails/
+  |   |-thumb_00000000.JPG
+  |   |-thumb_00000001.JPG
+  |   | ...
+  |   `-thumb_00010999.JPG
+</code></pre><p>どうすればいいだろうか？</p>
+</blockquote>
+<p>「すべての画像ファイルを縮小する」方法は次回の記事で考えるとして、まずは1枚の画像ファイルを 256px 四方に縮小する処理を考えよう。</p>
+<p>先ほど紹介したように、 <code>convert</code> コマンドの <code>-resize</code> オペレータを使えば画像を縮小できる。
+例題では幅・高さとも 256px にする必要があるので、アスペクト比を無視するために <code>!</code> を使おう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> dataset/
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000000.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumbnail_00000000.JPG
+</span></span></code></pre></div><p><img src="/images/lmle/8-imagemagick/convert_resize_example.png" alt="convert の -resize オペレータを使って縮小した結果の画像"></p>
+<p>もとの画像と比較すると、画像が縮小されてアスペクト比が 1:1 になっているのがわかる。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>今回の記事では、ImageMagick を使ってコマンドライン上で画像を加工・編集する方法を学んだ。
+コマンドラインを使ったコンピュータ操作は、画像のようなマルチメディアとは縁遠い印象をもつ人もいるかもしれないが、実はCLI環境でも様々なマルチメディアの処理ができる。</p>
+<p>今回は1枚の画像に対する処理のしかたを紹介したが、 CLI のツールが真価を発揮するのは、同じ処理をたくさんのデータに対して適用するときだ。
+このようなスケーラビリティの高さは、大量のデータを扱う機械学習の現場ではとても役に立つ。</p>
+<p>次回は、このような処理を可能にする <code>xargs</code> というコマンドを紹介しよう。
+<code>xargs</code> コマンドを使えば、大量の画像を1つのコマンドで操作できるだけでなく、並列処理による高速化というメリットも得られる。</p>
+<p>それでは、次回の記事もお楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong>ImageMagick</strong>: コマンドラインから画像処理をするためのツール。<code>convert</code> や <code>identify</code> などのコマンドを提供する。</li>
+<li><strong><code>convert</code></strong>: 画像を編集するコマンド
+<ul>
+<li><code>convert input.jpg output.png</code><br>
+JPEG 形式の画像（<code>input.jpg</code>）を PNG 形式（<code>output.png</code>）に変換して書き出す</li>
+<li><code>convert input.jpg -rotate 30 output.png</code><br>
+画像を時計回りに30度回転して書き出す</li>
+<li><code>convert input.jpg -resize 256x256 output.png</code><br>
+入力画像のアスペクト比を保ったまま、256×256px の枠内に収まるように縮小する</li>
+<li><code>convert input.jpg -resize '256x256!' output.png</code><br>
+入力画像のアスペクト比を無視して、256×256px に縮小する</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>ImageMagick のドキュメントやインターネット上の記事を参照しながら、次のコマンドがどのような処理をするか、説明してみよう。
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.png -crop 160x90+30+30 output.png
+</span></span></code></pre></div></li>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.png -resize <span class="s1">&#39;50%&#39;</span> output.png
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>次の2つのコマンドについて、出力される画像にどのような違いが生じるか、考えてみよう。
+<ol>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.jpg -blur 15x5 -bordercolor limegreen -border <span class="m">5</span> output.png
+</span></span></code></pre></div></li>
+<li>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert input.jpg -bordercolor limegreen -border <span class="m">5</span> -blur 15x5 output.png
+</span></span></code></pre></div></li>
+</ol>
+</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
