@@ -1,11 +1,11 @@
 ---
 title: "Linux コマンドラインのコンセプト: ImageMagick"
-date: 2023-06-11
+date: 2023-06-20
 draft: false
 
 series:
   - 機械学習エンジニアのためのLinux
-featured_image: "/images/lmle/7-cut/hero.jpg"
+featured_image: "/images/lmle/8-imagemagick/hero.jpg"
 
 ---
 
