@@ -9,6 +9,26 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Linux コマンドラインのコンセプト: ImageMagick</title>
+      <link>https://yumem.io/posts/linux-ml-8/</link>
+      <pubDate>Tue, 20 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-8/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第8回です。
+前回の復習 前回の記事までで、 find、tr、cut コマンドを組み合わせたパイプ処理を紹介した。
+今回からは、パイプ機能を使った別の例として、find コマンドと画像編集ツール ImageMagick を使って大量の画像を効率的にリサイズする方法を見ていこう。
+この記事では ImageMagick の使い方を紹介し、次回の記事では find と ImageMagick を組み合わせる方法を考えていく。
+ImageMagick とは？ ImageMagick は、コマンドライン上で利用できる画像編集ツール群だ。 画像のフォーマット変換、リサイズ・ぼかし・回転などの編集、さらにはCGの作成など幅広い機能をもち、Linux コマンドライン上で画像を加工するときに広く用いられている。
+ImageMagick は単体のツールではなく、convert（画像加工コマンド）、mogrify（画像の上書き編集コマンド）、identify（画像の情報を表示するコマンド）など、いくつかのコマンドをまとめたパッケージとして提供されている。
+その中核をなすのが convert（バージョン7では magick）コマンドだ。 このコマンドひとつで、画像の加工や作成などのさまざまな機能を使うことができる。
+📔 ノート
+ImageMagick は、バージョンによってコマンドの名前や機能が一部異なる。 最新のバージョン7では convert コマンドの名前が magick になる、という大きな変化があった。 このため、最新の ImageMagick 公式ドキュメントでは magick コマンドの利用が前提となっている。
+それに対して、Ubuntu など一部の Linux ディストリビューションでは、少し古い バージョン6 の ImageMagick がプリインストールされている場合がある。
+本稿では、ImageMagick v6 の convert コマンドを前提としているが、ImageMagick v7 がインストールされた環境では convert を magick に適宜読み替えてほしい。
+$ # ImageMagick v6 のコマンド例 $ convert input.</description>
+    </item>
+    
+    <item>
       <title>Linux コマンドラインのコンセプト: cut コマンド</title>
       <link>https://yumem.io/posts/linux-ml-7/</link>
       <pubDate>Sun, 04 Jun 2023 00:00:00 +0000</pubDate>
