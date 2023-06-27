@@ -9,6 +9,25 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Linux コマンドラインのコンセプト: xargs</title>
+      <link>https://yumem.io/posts/linux-ml-9/</link>
+      <pubDate>Tue, 27 Jun 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-9/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第9回です。
+前回の復習 前回の記事では、画像編集ツール ImageMagick の convert コマンドを紹介した。
+この記事では、xargs というコマンドを紹介する。 このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。
+xargs とは xargs とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。
+&amp;hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。
+❓ 例題
+find コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の identify コマンドで表示したい。 どうすればよいか。
+まず、コマンドの説明から始めよう。 第5回の記事 で説明したように、find は検索条件に合致するファイルパスを出力する。
+$ # find コマンドの実行例 $ # カレントディレクトリ (.) を再帰的に検索し、 $ # 末尾が &amp;#39;.JPG&amp;#39; のファイルパスを出力する $ find . -name &amp;#39;*.JPG&amp;#39; ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ./train/damaged/1002.JPG ./train/damaged/1003.JPG ... 一方 identify は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。
+次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして -verbose を指定すると、EXIF情報を含む詳細なデータを表示できる）。
+$ # identify コマンドの実行例 $ # 画像フォーマット: JPEG $ # 画像サイズ: 3840x2160 $ # 色空間: 8-bit sRGB $ identify .</description>
+    </item>
+    
+    <item>
       <title>Linux コマンドラインのコンセプト: ImageMagick</title>
       <link>https://yumem.io/posts/linux-ml-8/</link>
       <pubDate>Tue, 20 Jun 2023 00:00:00 +0000</pubDate>
