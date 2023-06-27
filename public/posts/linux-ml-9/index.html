@@ -1,0 +1,578 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Linux コマンドラインのコンセプト: xargs | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第9回です。
+前回の復習 前回の記事では、画像編集ツール ImageMagick の convert コマンドを紹介した。
+この記事では、xargs というコマンドを紹介する。 このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。
+xargs とは xargs とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。
+&hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。
+❓ 例題
+find コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の identify コマンドで表示したい。 どうすればよいか。
+まず、コマンドの説明から始めよう。 第5回の記事 で説明したように、find は検索条件に合致するファイルパスを出力する。
+$ # find コマンドの実行例 $ # カレントディレクトリ (.) を再帰的に検索し、 $ # 末尾が &#39;.JPG&#39; のファイルパスを出力する $ find . -name &#39;*.JPG&#39; ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ./train/damaged/1002.JPG ./train/damaged/1003.JPG ... 一方 identify は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。
+次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして -verbose を指定すると、EXIF情報を含む詳細なデータを表示できる）。
+$ # identify コマンドの実行例 $ # 画像フォーマット: JPEG $ # 画像サイズ: 3840x2160 $ # 色空間: 8-bit sRGB $ identify .">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="Linux コマンドラインのコンセプト: xargs" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第9回です。
+前回の復習 前回の記事では、画像編集ツール ImageMagick の convert コマンドを紹介した。
+この記事では、xargs というコマンドを紹介する。 このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。
+xargs とは xargs とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。
+&hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。
+❓ 例題
+find コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の identify コマンドで表示したい。 どうすればよいか。
+まず、コマンドの説明から始めよう。 第5回の記事 で説明したように、find は検索条件に合致するファイルパスを出力する。
+$ # find コマンドの実行例 $ # カレントディレクトリ (.) を再帰的に検索し、 $ # 末尾が &#39;.JPG&#39; のファイルパスを出力する $ find . -name &#39;*.JPG&#39; ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ./train/damaged/1002.JPG ./train/damaged/1003.JPG ... 一方 identify は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。
+次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして -verbose を指定すると、EXIF情報を含む詳細なデータを表示できる）。
+$ # identify コマンドの実行例 $ # 画像フォーマット: JPEG $ # 画像サイズ: 3840x2160 $ # 色空間: 8-bit sRGB $ identify ." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-9/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-06-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-06-27T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="Linux コマンドラインのコンセプト: xargs">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第9回です。
+前回の復習 前回の記事では、画像編集ツール ImageMagick の convert コマンドを紹介した。
+この記事では、xargs というコマンドを紹介する。 このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。
+xargs とは xargs とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。
+&hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。
+❓ 例題
+find コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の identify コマンドで表示したい。 どうすればよいか。
+まず、コマンドの説明から始めよう。 第5回の記事 で説明したように、find は検索条件に合致するファイルパスを出力する。
+$ # find コマンドの実行例 $ # カレントディレクトリ (.) を再帰的に検索し、 $ # 末尾が &#39;.JPG&#39; のファイルパスを出力する $ find . -name &#39;*.JPG&#39; ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ./train/damaged/1002.JPG ./train/damaged/1003.JPG ... 一方 identify は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。
+次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして -verbose を指定すると、EXIF情報を含む詳細なデータを表示できる）。
+$ # identify コマンドの実行例 $ # 画像フォーマット: JPEG $ # 画像サイズ: 3840x2160 $ # 色空間: 8-bit sRGB $ identify ."><meta itemprop="datePublished" content="2023-06-27T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-06-27T00:00:00+00:00" />
+<meta itemprop="wordCount" content="916">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Linux コマンドラインのコンセプト: xargs"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第9回です。
+前回の復習 前回の記事では、画像編集ツール ImageMagick の convert コマンドを紹介した。
+この記事では、xargs というコマンドを紹介する。 このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。
+xargs とは xargs とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。
+&hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。
+❓ 例題
+find コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の identify コマンドで表示したい。 どうすればよいか。
+まず、コマンドの説明から始めよう。 第5回の記事 で説明したように、find は検索条件に合致するファイルパスを出力する。
+$ # find コマンドの実行例 $ # カレントディレクトリ (.) を再帰的に検索し、 $ # 末尾が &#39;.JPG&#39; のファイルパスを出力する $ find . -name &#39;*.JPG&#39; ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ./train/damaged/1002.JPG ./train/damaged/1003.JPG ... 一方 identify は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。
+次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして -verbose を指定すると、EXIF情報を含む詳細なデータを表示できる）。
+$ # identify コマンドの実行例 $ # 画像フォーマット: JPEG $ # 画像サイズ: 3840x2160 $ # 色空間: 8-bit sRGB $ identify ."/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">Linux コマンドラインのコンセプト: xargs</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-06-27T00:00:00Z">
+        
+        2023年6月27日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-9/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-9/&amp;text=Linux%20%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%83%a9%e3%82%a4%e3%83%b3%e3%81%ae%e3%82%b3%e3%83%b3%e3%82%bb%e3%83%97%e3%83%88:%20xargs" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第9回です。</p>
+<h2 id="前回の復習">前回の復習</h2>
+<p><a href="/posts/linux-ml-8">前回の記事</a>では、画像編集ツール ImageMagick の <code>convert</code> コマンドを紹介した。</p>
+<p>この記事では、<code>xargs</code> というコマンドを紹介する。
+このコマンドは、大量のファイルを操作する際に欠かせないコマンドだ。</p>
+<h2 id="xargs-とは"><code>xargs</code> とは</h2>
+<p><code>xargs</code> とは「標準入力から受け取った内容を引数にして、別のコマンドを実行する」コマンドだ。</p>
+<p>&hellip;といってもイメージが湧きづらいと思うので、実例を見ながら説明しよう。</p>
+<blockquote>
+<p>❓ <strong>例題</strong></p>
+<p><code>find</code> コマンドで数百枚の画像ファイルを検索し、それらの画像の情報を ImageMagick の <code>identify</code> コマンドで表示したい。
+どうすればよいか。</p>
+</blockquote>
+<p>まず、コマンドの説明から始めよう。
+<a href="/posts/linux-ml-5">第5回の記事</a> で説明したように、<code>find</code> は検索条件に合致するファイルパスを出力する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># find コマンドの実行例</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1">#   カレントディレクトリ (.) を再帰的に検索し、</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1">#   末尾が &#39;.JPG&#39; のファイルパスを出力する</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">./train/good/0001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/good/0002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/good/0003.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/damaged/1001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/damaged/1002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/damaged/1003.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>一方 <code>identify</code> は、画像ファイルのパスを引数で指定すると、その画像の情報を表示するコマンドだ。</p>
+<p>次のコマンド例のように、画像フォーマットやピクセル数、色空間などの情報を表示できる（オプションとして <code>-verbose</code> を指定すると、EXIF情報を含む詳細なデータを表示できる）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># identify コマンドの実行例</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1">#   画像フォーマット: JPEG</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1">#   画像サイズ: 3840x2160</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1">#   色空間: 8-bit sRGB</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0001.JPG
+</span></span><span class="line"><span class="cl"><span class="go">0001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.75087MiB 0.010u 0:00.009
+</span></span></span></code></pre></div><p>では、次のように <code>find</code> で検索したすべてのファイルに対して <code>identify</code> を実行するには、どうすればよいだろうか、というのがこの例題である。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> （？？？）
+</span></span><span class="line"><span class="cl"><span class="go">0001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.75087MiB 0.010u 0:00.009
+</span></span></span><span class="line"><span class="cl"><span class="go">0002.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 3.62436MiB 0.010u 0:00.010
+</span></span></span><span class="line"><span class="cl"><span class="go">0003.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 3.55877MiB 0.000u 0:00.009
+</span></span></span><span class="line"><span class="cl"><span class="go">1001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.54995MiB 0.010u 0:00.010
+</span></span></span><span class="line"><span class="cl"><span class="go">1002.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.33384MiB 0.000u 0:00.010
+</span></span></span><span class="line"><span class="cl"><span class="go">1003.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.31245MiB 0.000u 0:00.000
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>ここで登場するのが <code>xargs</code> だ。
+<code>find</code> と <code>xargs</code> をパイプで接続し、<code>xargs</code> の引数として <code>identify</code> を渡す。
+こうすると、<code>find</code> で検索した結果が <code>identify</code> の引数として渡され、実行される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># find, xargs, identify を組み合わせた例</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> xargs identify
+</span></span><span class="line"><span class="cl"><span class="go">0001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.75087MiB 0.010u 0:00.009
+</span></span></span><span class="line"><span class="cl"><span class="go">0002.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 3.62436MiB 0.010u 0:00.010
+</span></span></span><span class="line"><span class="cl"><span class="go">0003.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 3.55877MiB 0.000u 0:00.009
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>言い換えると、上記のコマンド例は <code>find</code> が出力したファイルパスをコピーして、
+<code>identify</code> の引数にペーストして実行するのと等価だ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># 上記のコマンドは、次のコマンドと等価</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0001.JPG ./train/good/0002.JPG ./train/good/0003.JPG ./train/damaged/1001.JPG ...
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>数十個程度のパスであればコピー＆ペーストでも問題ないが、数百万個のファイルを処理するのはたいへんだ。
+このような時に <code>xargs</code> が役に立つ。</p>
+<h2 id="xargs-のオプション"><code>xargs</code> のオプション</h2>
+<p><code>xargs</code> にはいくつかのオプションがある。代表的なものを見ていこう。</p>
+<h3 id="-n-オプション-引数の数を指定する"><code>-n</code> オプション: 引数の数を指定する</h3>
+<p><code>identify</code> コマンドに一度に渡す引数の数は、<code>-n</code> オプションで指定できる。
+例えば <code>-n1</code> と指定すると、<code>xargs</code> は JPEGファイルのパス1つずつに対して <code>identify</code> コマンドを実行する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># -n1 を指定すると...</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> xargs -n1 identify
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># 次のように実行される</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0001.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0002.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0003.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/damaged/1001.JPG ...
+</span></span></code></pre></div><p><code>identify</code> は複数のファイルパスを引数として渡せるから <code>-n</code> を指定しなくてもよいし、指定しないほうがよい（複数の<code>identify</code> プロセスが実行されるので、処理時間が長くなってしまう）。
+しかし、1つのパスしか渡せないコマンドを実行するときや、決められた個数の引数をセットで渡すときは <code>-n</code> を使う価値がある。</p>
+<h3 id="-i-オプション-コマンドへの引数の渡し方を指定する"><code>-I</code> オプション: コマンドへの引数の渡し方を指定する</h3>
+<p>コマンドへの引数の渡し方を細かく指定したい場合には、<code>-I</code> オプションが役立つ。
+<code>-I{}</code> のように指定すると、<code>xargs</code> で呼び出すコマンドの引数に含まれる <code>{}</code>
+がすべて <code>xargs</code> から渡される引数に置き換えられる。</p>
+<p>&hellip;これも、説明より実例を見たほうが分かりやすいと思う。</p>
+<blockquote>
+<p>❓ <strong>例題</strong></p>
+<p>ImageMagick の <code>convert</code> コマンドを使って、数百枚の画像のサムネイルを作成したい。
+サムネイルは、元の画像を 256×256 px 四方にリサイズした画像とする。</p>
+<ul>
+<li>変換前の画像ファイルは <code>original/</code> ディレクトリ直下にある。</li>
+<li>サムネイルは <code>thumbnails/</code> 直下に保存したい。</li>
+</ul>
+</blockquote>
+<p>ImageMagick の <code>convert</code> コマンドでは、変換前と変換後の2つの画像パスを指定する必要がある。
+1枚のサムネイルを作成するコマンドは次のようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># 画像1枚のサムネイルを作成する例</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># `original/0001.JPG` の サムネイルを `thumbnails/0001.JPG` に書き出す</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert original/0001.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/0001.JPG
+</span></span></code></pre></div><p>これを <code>xargs</code> でバッチ化するのだが、可変の引数としたい箇所 (<code>0001.JPG</code>) が2箇所ある。
+このようなときに活躍するのが <code>-I</code> オプションだ。</p>
+<p>まず、可変の引数であるファイル名を生成するパイプラインを構築する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># 引数のうち、可変部分（ファイル名）を出力するパイプライン</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find original -maxdepth <span class="m">1</span> -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> cut -d/ -f2
+</span></span><span class="line"><span class="cl"><span class="go">0001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">0002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">0003.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>そして、<code>xargs -I{}</code> をこの後ろにくっつける。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># 可変部分を、convert の引数（original/{}, thumbnails/{}）に埋め込む</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find original -maxdepth <span class="m">1</span> -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> cut -d/ -f2 <span class="p">|</span>
+</span></span><span class="line"><span class="cl"><span class="go">  xargs -I{} convert original/{} -resize &#39;256x256!&#39; thumbnails/{}
+</span></span></span></code></pre></div><p>こうすると、<code>convert</code> コマンドの引数のうち、中括弧 (<code>{}</code>)
+でマークした2箇所がファイル名（<code>0001.JPG</code>、<code>0002.JPG</code>、&hellip;）で置き換えられてから実行される。</p>
+<p>言い換えると、上記のパイプラインは次のコマンドと等価になる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># 上記のパイプラインは、次のように実行される</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert original/0001.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/0001.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert original/0002.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/0002.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert original/0003.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/0003.JPG
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>このように、パイプラインから受け取った出力を引数の複数箇所に登場させたり、引数の一部にピンポイントで埋め込んだりする場合には、<code>-I</code> オプションが有用だ。</p>
+<p>ちなみに、置き換える文字列には中括弧を使うことが多いが、<code>-I@@</code> のように他の文字列を指定してもよい。</p>
+<h2 id="xargs-が必要なのはどんなとき"><code>xargs</code> が必要なのは、どんなとき？</h2>
+<p><a href="/posts/linux-ml-7">第7回の記事</a> では <code>find</code>・<code>tr</code>・<code>cut</code> という3つのコマンドを直接パイプで接続する例を紹介した。
+それに対して <code>identify</code> コマンドを <code>find</code> と組み合わせるときは <code>xargs</code> を挟む必要がある。</p>
+<p><code>xargs</code> なしでパイプ接続できるコマンドと、<code>xargs</code> を必要とするコマンドの違いは何だろうか？</p>
+<h3 id="データの渡し方-標準入出力と引数">データの渡し方: 標準入出力と引数</h3>
+<p>この違いを理解するうえでの鍵となるのが、コマンドへのデータの渡し方だ。</p>
+<p>各種の Linux コマンドは、<strong>標準入力</strong>や<strong>引数</strong>などいろいろなチャネルから、処理に必要なデータを受け取っている。</p>
+<p>例えば <code>cut</code> や <code>tr</code> などのフィルタコマンドは、標準入力からデータを受け取るタイプのコマンドだ。
+任意のコマンドと <code>cut</code> をパイプでつなぐと、<code>cut</code> コマンドは指定したデータだけを抽出してくれる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># cut の標準入力に、処理したいデータをパイプ経由で渡す</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> &lt;任意のコマンド&gt; <span class="p">|</span> cut
+</span></span></code></pre></div><p>一方、先ほど見た <code>identify</code> をはじめ、<code>ls</code> や <code>convert</code> などのコマンドは、操作対象のファイルを引数として指定する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># identify の引数として、処理対象のファイルパスを渡す</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify /path/to/file
+</span></span></code></pre></div><p>標準入力と引数のどちらからデータを渡してもよい、というコマンドもある。
+例えば <code>cut</code> コマンドには、標準入力からデータを渡す代わりに、データの入ったファイルのパスを引数として指定することもできる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># cut には引数として、処理するテキストのファイルパスを渡してもよい</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> cut /path/to/text-file
+</span></span></code></pre></div><p>例外もあるが、<strong>処理するデータ自体は標準入力として渡し、ファイルパスは引数として渡す</strong>、というのが一般的だ。</p>
+<h3 id="コマンドの組み合わせパターン">コマンドの組み合わせパターン</h3>
+<p>複数のコマンドをパイプで組み合わせる場合、代表的な例として次の2パターンが考えられる。</p>
+<ol>
+<li>コマンドAがデータを出力 → コマンドB（<code>cut</code> や <code>tr</code>など）でデータを加工</li>
+<li>コマンドAがファイルパスを出力 → コマンドBでそのファイルを処理</li>
+</ol>
+<p><strong><code>xargs</code> が必要になるのは、後者の「コマンドAが出力したファイルパスを使って、コマンドBでファイル自体を処理する」パターン</strong>だ。
+記事の序盤で紹介した <code>find</code> と <code>identify</code> の組み合わせの例も、このパターンに当てはまる。</p>
+<p>このパターンのとき、コマンドA (<code>find</code> など) の出力をそのままコマンドB (<code>identify</code> など) にパイプ接続すると、ファイルパスはコマンドBに標準入力として渡されてしまう。
+多くの場合、ファイルパスは引数として渡す必要があるから、これではコマンドBが動作しない。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># find がファイルパスを出力する</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find
+</span></span><span class="line"><span class="cl"><span class="go">./train/good/0001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/good/0002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># command_B でファイルを処理する</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/good/0001.JPG
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># ❌ これは期待通りに動作しない</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># （ファイルパスが identify の標準入力に渡される）</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find <span class="p">|</span> identify
+</span></span></code></pre></div><p>そこで <code>xargs</code> の出番だ。
+<code>xargs</code> は、標準入力から引数にデータを移す役割をもっている。
+<code>find</code> と <code>xargs identify</code> を接続すると、<code>xargs</code> は <code>find</code> が出力するパスを受け取り、それを <code>identify</code> に引数として渡して実行する。</p>
+<p>このため、「<code>find</code> で検索したファイルパスに対して <code>identify</code> を実行する」という動作ができるようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ✅ これは正しく動作する</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># （ファイルパスが identify に引数として渡される）</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find <span class="p">|</span> xargs identify
+</span></span></code></pre></div><h2 id="並列化">並列化</h2>
+<p><code>xargs</code> には「標準入力を引数に移す」機能のほかに、コマンドの並列化（マルチプロセシング）という機能ももっている。
+これを活用すると、時間のかかる処理を高速化することができる。</p>
+<p>並列化を有効にするには、<code>xargs</code> の <code>-P</code> オプションを使う。
+<code>-P</code> にプロセス数を指定すると、その数だけコマンドが並列実行される。</p>
+<pre tabindex="0"><code>xargs -P&lt;プロセス数&gt; &lt;実行するコマンド&gt;
+</code></pre><p>例えば、次のコマンドは「拡張子 .JPG の画像を 256px 四方にリサイズして上書き保存する」コマンドだ。
+<code>find</code>、<code>xargs</code>、ImageMagick の <code>mogrify</code> という3つのコマンドを使っている。</p>
+<pre tabindex="0"><code>$ # 拡張子 .JPG の画像を256px四方に縮小し、上書き保存する
+$ # mogrify は1つのみ立ち上げ
+$ find . -name &#39;*.JPG&#39; | xargs mogrify -resize &#39;256x256!&#39;
+</code></pre><p>上記の例で、同時に実行される <code>mogrify</code> プロセスは1つだけだ。</p>
+<p>これを4つのプロセスで並列実行してみよう (<code>-P4</code>)。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> xargs -P4 mogrify -resize <span class="s1">&#39;256x256!&#39;</span>
+</span></span></code></pre></div><p>こうすると、4つの <code>mogrify</code> プロセスが同時に画像を処理する。</p>
+<p>なお <code>mogrify</code> の場合は、残念ながら並列化の恩恵は受けられない（<code>mogrify</code> 自体がマルチスレッドによる複数ファイルのリサイズ処理に対応している）。
+しかし、複数コアCPUをもつマシンでマルチスレッド非対応のコマンドを実行する場合は、処理を大幅に高速化できる。</p>
+<h2 id="空白文字という落とし穴">「空白文字」という落とし穴</h2>
+<p><code>xargs</code> を使ううえで注意したいのが <strong>空白文字の処理</strong> だ。
+ファイル名に含まれる空白文字に気をつけないと、意図しない処理が実行されて大事故を起こすことがある。</p>
+<p>これまでと同様に、<code>find</code> の出力を <code>xargs</code> にパイプするケースを考えてみよう。
+ただし、これまでの事例と異なり、ファイル名にはスペースが含まれている。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-18 DCIM0001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-18 DCIM0002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-22 DCIM0003.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/dog/2020-10-07 DSC_1001.JPG
+</span></span></span></code></pre></div><p>この出力を <code>xargs identify</code> にパイプすると、「ファイルが存在しない（No such file or directory）」というエラーになってしまう。
+。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ❌ find の出力を直接 xargs に渡すとエラーになる</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> xargs identify
+</span></span><span class="line"><span class="cl"><span class="go">identify-im6.q16: unable to open image `./train/fish/2020-09-18&#39;: No such file or directory @ error/blob.c/OpenBlob/2874.
+</span></span></span><span class="line"><span class="cl"><span class="go">identify-im6.q16: no decode delegate for this image format `&#39; @ error/constitute.c/ReadImage/560.
+</span></span></span><span class="line"><span class="cl"><span class="go">identify-im6.q16: unable to open image `DCIM0001.JPG&#39;: No such file or directory @ error/blob.c/OpenBlob/2874.
+</span></span></span><span class="line"><span class="cl"><span class="go">identify-im6.q16: unable to open image `DCIM0001.JPG&#39;: No such file or directory @ error/blob.c/OpenBlob/2874.
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>このエラーが起こる原因は、<code>xargs</code> が引数を区切る方法に関係している。</p>
+<p><code>xargs</code> は標準でスペースや改行などの「空白文字」を引数の区切りとみなす。
+このため、スペースが含まれているファイルパスを渡すと、スペースの前後でファイルパスを区切って <code>identify</code> に渡してしまう。</p>
+<p>つまり、&quot;<code>./train/fish/2020-09-18 DCIM0001.JPG</code>&quot; というファイルパスを、<code>xargs</code>
+は &ldquo;<code>./train/fish/2020-09-18</code>&rdquo; と &ldquo;<code>DCIM0001.JPG</code>&rdquo; という2つの引数と解釈してしまい、エラーになってしまう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># xargs は次のように identify を呼び出すので、エラーになる</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/fish/2020-09-18
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify DCIM0001.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify ./train/fish/2020-09-18
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> identify DCIM0002.JPG
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>このような理由から、空白文字が含まれる可能性のあるファイルパスを扱う場合は <code>-0</code> オプションを使うのが安全だ。</p>
+<p><code>-0</code> オプションをつけると、<code>xargs</code> は空白文字の代わりに「ヌル文字」とよばれる記号を引数の区切りとして扱う。
+Linux ではヌル文字をファイル名に含めることができないので、エラーを心配せずにファイルパスを扱える。</p>
+<p>この場合、 <code>find</code> コマンドの側でもファイルパス間にヌル文字を出力させる必要がある。
+<code>find</code> は、デフォルトではファイルパス間に改行を出力するが、<code>-print0</code> をつけるとヌル文字が出力される。</p>
+<p><code>find</code> に <code>-print0</code>、<code>xargs</code> に <code>-0</code> をつけて再実行すると、意図したとおりにコマンドが実行される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ✅ 引数間の区切りをヌル文字にすると、うまくいく</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> -print0 <span class="p">|</span> xargs -0 identify
+</span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-18 DCIM0001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.39637MiB 0.010u 0:00.010
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-18 DCIM0002.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.54445MiB 0.000u 0:00.000
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/fish/2020-09-22 DCIM0003.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2.68571MiB 0.010u 0:00.000
+</span></span></span><span class="line"><span class="cl"><span class="go">./train/dog/2020-10-07 DSC_1001.JPG JPEG 3840x2160 3840x2160+0+0 8-bit sRGB 2811470B 0.000u 0:00.000
+</span></span></span></code></pre></div><blockquote>
+<p><strong>📔 ノート</strong></p>
+<p>上記の例では <code>find</code> と <code>xargs</code> の2つによるパイプ処理を紹介したが、パイプラインに他のコマンドが含まれる場合は、それらのコマンドもヌル文字を区切り文字として扱うように設定する必要がある。</p>
+<p>例えば、<code>cut</code> コマンドはデフォルトで改行を区切り文字としているが、<code>find -print0</code> の結果を <code>cut</code> に渡す場合は、<code>cut</code> の <code>-z</code> オプションをつける必要がある。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ヌル文字区切りの出力を cut に渡すときは、-z をつける</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find . -name <span class="s1">&#39;*.JPG&#39;</span> -print0 <span class="p">|</span> cut -z -d/ -f4
+</span></span></code></pre></div></blockquote>
+<h2 id="まとめ">まとめ</h2>
+<p>今回の記事では <code>xargs</code> コマンドについて説明した。
+コマンドライン上で大量のデータを操作するとき、<code>xargs</code> のようなコマンドは2つの理由で重要な役割を果たす。</p>
+<ol>
+<li><code>xargs</code> は、ファイルパスを出力するコマンドと、そのファイルパスを引数として処理をするコマンドの橋渡しをしてくれる。</li>
+<li><code>xargs</code> によってコマンド処理を並列化し、処理時間を短縮できる。</li>
+</ol>
+<p>次回の記事では、前回の記事で提示した「大量の画像に対するサムネイルを作成する」という例題の解決方法を紹介しよう。
+<code>xargs</code> を使うことで、この例題のような複雑な処理も可能になる。</p>
+<p>それでは、次回の記事をお楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong><code>xargs</code></strong>: 標準入力から受け取った値を、別のコマンドの引数に渡して実行するコマンド</li>
+<li><code>xargs</code> のオプション
+<ul>
+<li><code>-n&lt;数値&gt;</code>: コマンドに一度に渡す引数の個数を指定する</li>
+<li><code>-I&lt;文字列&gt;</code>: 指定した文字列を引数に置き換える</li>
+<li><code>-0</code>: ヌル文字を引数間の区切りとする（引数として渡す値にスペースなどの空白文字が含まれる場合に必要）</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>次のコマンドがどのような処理をするか、説明してみよう。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find samples/ -name <span class="s1">&#39;*.wav&#39;</span> -print0 <span class="p">|</span> xargs -0 ls -l
+</span></span></code></pre></div></li>
+<li>Linux において、ファイル名として使うことが禁止されている文字はなにか、調べてみよう。</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
