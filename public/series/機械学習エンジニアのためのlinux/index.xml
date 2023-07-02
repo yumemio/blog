@@ -7,7 +7,26 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>ja-jp</language>
     <copyright>Yuki Sasaki</copyright>
-    <lastBuildDate>Tue, 27 Jun 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 02 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ImageMagick ＋ xargs で大量の画像をリサイズする</title>
+      <link>https://yumem.io/posts/linux-ml-10/</link>
+      <pubDate>Sun, 02 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-10/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第10回です。
+概要 前回の記事で xargs コマンドについて、第8回の記事で ImageMagick の convert コマンドについて説明した。
+今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。
+例題 次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。
+❓ 課題
+下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。
+dataset |-thumbnails/ |-train/ | |-00000000.JPG | |-00000001.JPG | |-00000002.JPG | | ... | `-00009999.JPG `-val/ |-00010000.JPG |-00010001.JPG |-00010002.JPG | ... `-00010999.JPG dataset/train と dataset/val ディレクトリの下にあるすべての画像ファイルを縮小して、dataset/thumbnailsディレクトリに保存したい。
+縮小した画像は幅・高さとも 256px とし、次のように thumbnails/ の直下に保存したいとしよう。
+dataset |-thumbnails/ | |-thumb_00000000.JPG | |-thumb_00000001.JPG | | ... | `-thumb_00010999.JPG どうすればいいだろうか？
+ディレクトリを作成する まず、サムネイル画像の保存先となる thumbnails/ ディレクトリを作成しておこう。 ディレクトリを作成するには、mkdir というコマンドを使う。
+$ cd /path/to/dataset $ mkdir thumbnails 1枚の画像を変換するケースを考える 続いて、本題である画像のサムネイル作成に移るのだが、 すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。</description>
+    </item>
+    
     <item>
       <title>Linux コマンドラインのコンセプト: xargs</title>
       <link>https://yumem.io/posts/linux-ml-9/</link>
