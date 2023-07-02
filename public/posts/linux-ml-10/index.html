@@ -1,31 +1,33 @@
+
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="ja-jp">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
-    <title>Linux はじめの一歩 | yumem.io</title>
+    <title>ImageMagick ＋ xargs で大量の画像をリサイズする | yumem.io</title>
     <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
-阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
-藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
-藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
-（）
-h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
-例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
-$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
-（最後のファイルが気になる…）
-Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. ">
-    <meta name="generator" content="Hugo 0.105.0">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第10回です。
+概要 前回の記事で xargs コマンドについて、第8回の記事で ImageMagick の convert コマンドについて説明した。
+今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。
+例題 次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。
+❓ 課題
+下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。
+dataset |-thumbnails/ |-train/ | |-00000000.JPG | |-00000001.JPG | |-00000002.JPG | | ... | `-00009999.JPG `-val/ |-00010000.JPG |-00010001.JPG |-00010002.JPG | ... `-00010999.JPG dataset/train と dataset/val ディレクトリの下にあるすべての画像ファイルを縮小して、dataset/thumbnailsディレクトリに保存したい。
+縮小した画像は幅・高さとも 256px とし、次のように thumbnails/ の直下に保存したいとしよう。
+dataset |-thumbnails/ | |-thumb_00000000.JPG | |-thumb_00000001.JPG | | ... | `-thumb_00010999.JPG どうすればいいだろうか？
+ディレクトリを作成する まず、サムネイル画像の保存先となる thumbnails/ ディレクトリを作成しておこう。 ディレクトリを作成するには、mkdir というコマンドを使う。
+$ cd /path/to/dataset $ mkdir thumbnails 1枚の画像を変換するケースを考える 続いて、本題である画像のサムネイル作成に移るのだが、 すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。">
+    <meta name="generator" content="Hugo 0.107.0">
     
     
     
     
-      <meta name="robots" content="noindex, nofollow">
+      <meta name="robots" content="index, follow">
     
 
     
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
 
 
 
@@ -46,92 +48,134 @@ Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub r
 
     
     
-    <meta property="og:title" content="Linux はじめの一歩" />
-<meta property="og:description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
-阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
-藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
-藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
-（）
-h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
-例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
-$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
-（最後のファイルが気になる…）
-Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. " />
+    <meta property="og:title" content="ImageMagick ＋ xargs で大量の画像をリサイズする" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第10回です。
+概要 前回の記事で xargs コマンドについて、第8回の記事で ImageMagick の convert コマンドについて説明した。
+今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。
+例題 次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。
+❓ 課題
+下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。
+dataset |-thumbnails/ |-train/ | |-00000000.JPG | |-00000001.JPG | |-00000002.JPG | | ... | `-00009999.JPG `-val/ |-00010000.JPG |-00010001.JPG |-00010002.JPG | ... `-00010999.JPG dataset/train と dataset/val ディレクトリの下にあるすべての画像ファイルを縮小して、dataset/thumbnailsディレクトリに保存したい。
+縮小した画像は幅・高さとも 256px とし、次のように thumbnails/ の直下に保存したいとしよう。
+dataset |-thumbnails/ | |-thumb_00000000.JPG | |-thumb_00000001.JPG | | ... | `-thumb_00010999.JPG どうすればいいだろうか？
+ディレクトリを作成する まず、サムネイル画像の保存先となる thumbnails/ ディレクトリを作成しておこう。 ディレクトリを作成するには、mkdir というコマンドを使う。
+$ cd /path/to/dataset $ mkdir thumbnails 1枚の画像を変換するケースを考える 続いて、本題である画像のサムネイル作成に移るのだが、 すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://example.org/posts/linux-ml-10/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2022-11-23T00:00:00+00:00" />
-<meta property="article:modified_time" content="2022-11-23T00:00:00+00:00" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-10/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-02T00:00:00+00:00" />
 
-<meta itemprop="name" content="Linux はじめの一歩">
-<meta itemprop="description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
-阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
-藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
-藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
-（）
-h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
-例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
-$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
-（最後のファイルが気になる…）
-Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. "><meta itemprop="datePublished" content="2022-11-23T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2022-11-23T00:00:00+00:00" />
-<meta itemprop="wordCount" content="66">
-<meta itemprop="keywords" content="linux," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Linux はじめの一歩"/>
-<meta name="twitter:description" content="登場人物紹介 須藤（すどう）くん：とある大学の理学部3年生。 ロボティクスと
-阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。 音声合成に関心があり、…。 研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。
-藤野屋（ふじのや）教授：大学で…を教えている。 Linux の扱いはお手の物。
-藤野屋研究室にて （…先生から渡された課題、難しいなぁ…。）
-（）
-h2 h3 h4 find - ファイルを検索する ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。
-例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、
-$ find . -type f ./iphone/DSC0001.JPG ./iphone/DSC0002.JPG ./iphone/DSC0003.JPG ./iphone/DSC0004.JPG ./secret/renlin/seiga-4bd74c016e.jpg のようにすればいい。
-（最後のファイルが気になる…）
-Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub repo: File all bugs/feature requests. If you have questions, you can ask them on Jekyll Talk. "/>
 
+<meta itemprop="name" content="ImageMagick ＋ xargs で大量の画像をリサイズする">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第10回です。
+概要 前回の記事で xargs コマンドについて、第8回の記事で ImageMagick の convert コマンドについて説明した。
+今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。
+例題 次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。
+❓ 課題
+下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。
+dataset |-thumbnails/ |-train/ | |-00000000.JPG | |-00000001.JPG | |-00000002.JPG | | ... | `-00009999.JPG `-val/ |-00010000.JPG |-00010001.JPG |-00010002.JPG | ... `-00010999.JPG dataset/train と dataset/val ディレクトリの下にあるすべての画像ファイルを縮小して、dataset/thumbnailsディレクトリに保存したい。
+縮小した画像は幅・高さとも 256px とし、次のように thumbnails/ の直下に保存したいとしよう。
+dataset |-thumbnails/ | |-thumb_00000000.JPG | |-thumb_00000001.JPG | | ... | `-thumb_00010999.JPG どうすればいいだろうか？
+ディレクトリを作成する まず、サムネイル画像の保存先となる thumbnails/ ディレクトリを作成しておこう。 ディレクトリを作成するには、mkdir というコマンドを使う。
+$ cd /path/to/dataset $ mkdir thumbnails 1枚の画像を変換するケースを考える 続いて、本題である画像のサムネイル作成に移るのだが、 すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。"><meta itemprop="datePublished" content="2023-07-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-07-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="628">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ImageMagick ＋ xargs で大量の画像をリサイズする"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第10回です。
+概要 前回の記事で xargs コマンドについて、第8回の記事で ImageMagick の convert コマンドについて説明した。
+今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。
+例題 次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。
+❓ 課題
+下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。
+dataset |-thumbnails/ |-train/ | |-00000000.JPG | |-00000001.JPG | |-00000002.JPG | | ... | `-00009999.JPG `-val/ |-00010000.JPG |-00010001.JPG |-00010002.JPG | ... `-00010999.JPG dataset/train と dataset/val ディレクトリの下にあるすべての画像ファイルを縮小して、dataset/thumbnailsディレクトリに保存したい。
+縮小した画像は幅・高さとも 256px とし、次のように thumbnails/ の直下に保存したいとしよう。
+dataset |-thumbnails/ | |-thumb_00000000.JPG | |-thumb_00000001.JPG | | ... | `-thumb_00010999.JPG どうすればいいだろうか？
+ディレクトリを作成する まず、サムネイル画像の保存先となる thumbnails/ ディレクトリを作成しておこう。 ディレクトリを作成するには、mkdir というコマンドを使う。
+$ cd /path/to/dataset $ mkdir thumbnails 1枚の画像を変換するケースを考える 続いて、本題である画像のサムネイル作成に移るのだが、 すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。"/>
+
+      
+    
 	
+    
+    <link rel="stylesheet" href="/css/custom.css">
   </head>
 
-  <body class="ma0 serif bg-white DEV">
+  <body class="ma0 serif bg-white production">
 
     
    
-  <header>
-  <div class="pb3-m">
-    <h1 class="f2 fw10 ma3 mw9 center ph4 ph5-l">
-      <a href="/" class="color-inherit link">
-        yumem.io
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
       </a>
     </h1>
-    <nav class="bg-navy" role="navigation">
-  <div class="mw9 ph5-l flex-l justify-between center">
-    <div class="flex-l items-center">
-      
+    
 
-      
-        <ul class="pl0 mr3">
-          
-          <li class="list f3-ns fw3 dib ph4">
-            <a class="hover-white no-underline white-90" href="/about/" title="About page">
-              ABOUT
-            </a>
-          </li>
-          
-          <li class="list f3-ns fw3 dib ph4">
-            <a class="hover-white no-underline white-90" href="/posts/" title="Posts page">
-              POSTS
-            </a>
-          </li>
-          
-        </ul>
-      
-      
-<div class="ananke-socials">
-  
-</div>
 
-    </div>
-  </div>
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
 </nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
 
     
   </div>
@@ -139,21 +183,30 @@ Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub r
 
 
 
-    <main class="pb7" role="main">
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
       
   
   <article class="flex-l flex-wrap justify-between mw8 center ph3">
-    <header class="mt4 w-100">
+    <header class="mv4 w-100">
       <aside class="instapaper_ignoref b serif tracked">
         
           
-          <a href="http://example.org/categories/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
            gray">
               機械学習エンジニアのためのLinux
           </a>
           
         
       </aside>
+      <h1 class="f2 serif mt3 mb1">ImageMagick ＋ xargs で大量の画像をリサイズする</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-07-02T00:00:00Z">
+        
+        2023年7月2日
+      </time>
+      
+
       
 
 
@@ -167,66 +220,246 @@ Jekyll docs: more info on how to get the most out of Jekyll. Jekyll’s GitHub r
 
   <div id="sharing" class="mt3 ananke-socials">
     
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-10/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-10/&amp;text=ImageMagick%20%ef%bc%8b%20xargs%20%e3%81%a7%e5%a4%a7%e9%87%8f%e3%81%ae%e7%94%bb%e5%83%8f%e3%82%92%e3%83%aa%e3%82%b5%e3%82%a4%e3%82%ba%e3%81%99%e3%82%8b" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
   </div>
 
 
-      <h1 class="f1 serif mt3 mb1">Linux はじめの一歩</h1>
-      
-      
-      <time class="mt2 mb4 dib tracked" datetime="2022-11-23T00:00:00Z">November 23, 2022</time>
-      
 
       
       
     </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links black pr4-l w-two-thirds-l"><h2 id="登場人物紹介">登場人物紹介</h2>
-<p><img src="/images/imagenet_sunset.png" alt="sudo">
-須藤（すどう）くん：とある大学の理学部3年生。
-ロボティクスと</p>
-<p><img src="/images/imagenet_sunset.png" alt="achi">
-阿知（あち）先輩：とある大学院の1年生で、藤野屋研究室に所属。
-音声合成に関心があり、…。
-研究のため毎日 Ubuntu の画面を眺めているので、Linux の扱いには慣れている。</p>
-<p><img src="/images/imagenet_sunset.png" alt="fujinoya">
-藤野屋（ふじのや）教授：大学で…を教えている。
-Linux の扱いはお手の物。</p>
-<h2 id="藤野屋研究室にて">藤野屋研究室にて</h2>
-<p><img src="/images/imagenet_sunset.png" alt="sudo"> （…先生から渡された課題、難しいなぁ…。）</p>
-<p><img src="/images/imagenet_sunset.png" alt="sudo"></p>
-<p><img src="/images/imagenet_sunset.png" alt="sudo"> （）</p>
-<h2 id="h2">h2</h2>
-<h3 id="h3">h3</h3>
-<h4 id="h4">h4</h4>
-<hr>
-<h3 id="find---ファイルを検索する"><code>find</code> - ファイルを検索する</h3>
-<p><img src="/images/imagenet_sunset.png" alt="sunset">
-ファイルの名前だけじゃなくて、ファイルの種類や編集日時を検索条件にすることもできるんだ。</p>
-<p>例えば、今いるディレクトリ以下にあるファイルをリストアップしたいときは、</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">$ find . -type f
-</span></span><span class="line"><span class="cl">./iphone/DSC0001.JPG
-</span></span><span class="line"><span class="cl">./iphone/DSC0002.JPG
-</span></span><span class="line"><span class="cl">./iphone/DSC0003.JPG
-</span></span><span class="line"><span class="cl">./iphone/DSC0004.JPG
-</span></span><span class="line"><span class="cl">./secret/renlin/seiga-4bd74c016e.jpg
-</span></span></code></pre></div><p>のようにすればいい。</p>
-<p><img src="/images/imagenet_sunset.png" alt="sunset"> （最後のファイルが気になる…）</p>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第10回です。</p>
+<h2 id="概要">概要</h2>
+<p><a href="/posts/linux-ml-9">前回の記事</a>で <code>xargs</code> コマンドについて、<a href="/posts/linux-ml-8">第8回の記事</a>で ImageMagick の <code>convert</code> コマンドについて説明した。</p>
+<p>今回は、これら2つのコマンドを組み合わせて、大量の画像をリサイズする方法を見ていこう。</p>
+<h2 id="例題">例題</h2>
+<p>次のようなケースを考えてみよう（第8回の記事で取り上げた例題と同じものだ）。</p>
+<blockquote>
+<p><strong>❓ 課題</strong></p>
+<p>下記のようなディレクトリ構造をもつ画像データセットがあるとしよう。</p>
+<pre tabindex="0"><code>dataset
+  |-thumbnails/
+  |-train/
+  |   |-00000000.JPG
+  |   |-00000001.JPG
+  |   |-00000002.JPG
+  |   | ...
+  |   `-00009999.JPG
+  `-val/
+      |-00010000.JPG
+      |-00010001.JPG
+      |-00010002.JPG
+      | ...
+      `-00010999.JPG
+</code></pre><p><code>dataset/train</code> と <code>dataset/val</code> ディレクトリの下にあるすべての画像ファイルを縮小して、<code>dataset/thumbnails</code>ディレクトリに保存したい。</p>
+<p>縮小した画像は幅・高さとも 256px とし、次のように <code>thumbnails/</code> の直下に保存したいとしよう。</p>
+<pre tabindex="0"><code>dataset
+  |-thumbnails/
+  |   |-thumb_00000000.JPG
+  |   |-thumb_00000001.JPG
+  |   | ...
+  |   `-thumb_00010999.JPG
+</code></pre><p>どうすればいいだろうか？</p>
+</blockquote>
+<h2 id="ディレクトリを作成する">ディレクトリを作成する</h2>
+<p>まず、サムネイル画像の保存先となる <code>thumbnails/</code> ディレクトリを作成しておこう。
+ディレクトリを作成するには、<code>mkdir</code> というコマンドを使う。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /path/to/dataset
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> mkdir thumbnails
+</span></span></code></pre></div><h2 id="1枚の画像を変換するケースを考える">1枚の画像を変換するケースを考える</h2>
+<p>続いて、本題である画像のサムネイル作成に移るのだが、
+すべての画像を処理するパイプラインを構築する前に、まずは1枚の画像を変換するケースから始めよう。</p>
+<p><code>train/00000000.JPG</code> をリサイズする場合を考えてみよう。
+<a href="/posts/linux-ml-8">第8回の記事</a>で見たように、画像のリサイズには ImageMagick の <code>convert</code> コマンドが使える。
+オペレータに <code>-resize '256x256!'</code> を指定すれば、縦横256pxにリサイズできる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># train/00000000.JPG を 256px 四方にリサイズして、 thumbnails/ に保存する</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000000.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00000000.JPG
+</span></span></code></pre></div><h2 id="xargs-でバッチ処理する"><code>xargs</code> でバッチ処理する</h2>
+<p>1枚の画像をリサイズするコマンドが作成できたら、次に <code>xargs</code> を使ったバッチ化に取りかかろう。</p>
+<p><code>xargs</code> を使うときに大切なのは、「ファイルごとに変化する部分」と「ファイルによらず変化しない部分」を見分けることだ。</p>
+<p>今回の例題では、先ほどの <code>convert</code> コマンドを <code>train/</code> と <code>val/</code> ディレクトリ内のすべての画像に対して実行する。
+このとき、引数のなかでファイルごとに変化するのは次の2箇所だ。</p>
+<p>(1) 変換元ファイルのパスの一部（<code>convert</code> の最初の引数）<br>
+(2) 保存先ファイル名の一部（<code>thumb_</code> 以降の部分）</p>
+<p>変化する箇所を下線で示すと、次のようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000000.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00000000.JPG
+</span></span><span class="line"><span class="cl"><span class="go">      (1) ^^^^^^^^^^^^^^^^^^                                 (2) ^^^^^^^^^^^^
+</span></span></span></code></pre></div><p>この「ファイルごとに変化する箇所」にピンポイントで文字列を埋め込む場合、<code>xargs -I</code> が使える。</p>
+<p><a href="/posts/linux-ml-9">前回の記事</a>でみたように、コマンド引数のうち変化する部分を <code>{}</code> で示して、
+<code>xargs</code> に <code>-I{}</code> オプションを指定すると、
+<code>xargs</code> はその記号を標準入力から受け取った値に置き換えてくれる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># xargs -I{} を指定すると...</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find ... <span class="p">|</span> xargs -I<span class="o">{}</span> convert <span class="o">{}</span> ... <span class="o">{}</span>
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># xargs が受け取った値は {} の部分に埋め込まれて、次のように実行される</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert /path/to/file1 ... /path/to/file1
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert /path/to/file2 ... /path/to/file2
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert /path/to/file3 ... /path/to/file3
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>ここで問題になるのは、<code>xargs -I{}</code> では複数の <code>{}</code> に異なる値を埋め込むことができない、という制約だ。
+今回の例題の場合、次のようなコマンドにはできない。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ❌ {} に異なる値をセットできないので、このようにはできない</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> xargs -I<span class="o">{}</span> convert <span class="o">{}</span> ... thumbnails/thumb_<span class="o">{}</span>
+</span></span></code></pre></div><p>なぜなら、<strong><code>xargs</code> は1つめと2つめの <code>{}</code> に別の値をセットすることができない</strong> からだ。</p>
+<p>仮に、この <code>xargs</code> の標準入力に <code>train/00000000.JPG</code> を渡したとすると、すべての <code>{}</code> が <code>train/00000000.JPG</code> に置き換えられて、次のようなコマンドが実行されてしまう。
+(2) の出力先ファイルパスがおかしくなっているのが分かると思う。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000000.JPG ... thumbnails/thumb_train/00000000.JPG
+</span></span><span class="line"><span class="cl"><span class="go">      (1) ^^^^^^^^^^^^^^^^^^                  (2) ^^^^^^^^^^^^^^^^^^
+</span></span></span></code></pre></div><p>だからといって、<code>xargs</code> にファイル名 (<code>00000000.JPG</code>など) だけを渡すと、今度は入力元のファイルパス (1) からサブディレクトリ名（<code>train/</code> と <code>val/</code>）が抜けてしまう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert 00000000.JPG ... thumbnails/thumb_00000000.JPG
+</span></span><span class="line"><span class="cl"><span class="go">      (1) ^^^^^^^^^^^^                  (2) ^^^^^^^^^^^^
+</span></span></span></code></pre></div><p>このような場合の解決策として、複数の箇所に異なる値を埋め込めるようにする方法もあるのだが、複雑な作業が必要になる。</p>
+<p>そこで、今回はシンプルに <code>train/</code> ディレクトリと <code>val/</code> ディレクトリで別々のコマンドを用意することにしよう。</p>
+<p>コマンドを分ければ、(1) に含まれるディレクトリ名（<code>train/</code> と <code>val/</code>） の部分は考えなくてよい。
+次のように(1)、(2) の両方に同じ値（ファイル名）を指定すればよいので、<code>xargs</code> での扱いが楽になる、というわけだ</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ✅ {} に同じ値をセットできるように、</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># train/ と val/ でコマンドを分けてしまえばよい</span>
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># train/ ディレクトリ内の画像サムネイルを作成するコマンド</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> xargs -I<span class="o">{}</span> convert train/<span class="o">{}</span> -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_<span class="o">{}</span>
+</span></span><span class="line"><span class="cl"><span class="go">                       (1) ^^                                 (2) ^^
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># val/ ディレクトリ内の画像サムネイルを作成するコマンド</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> xargs -I<span class="o">{}</span> convert val/<span class="o">{}</span> -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_<span class="o">{}</span>
+</span></span><span class="line"><span class="cl"><span class="go">                     (1) ^^                                 (2) ^^
+</span></span></span></code></pre></div><h2 id="xargs-への入力パイプラインを構築する"><code>xargs</code> への入力パイプラインを構築する</h2>
+<p><code>xargs</code> で実行するコマンドができたら、必要なデータ（この場合は、ファイル名）を<code>xargs</code> の標準入力に流し込むパイプラインを構築する。</p>
+<p>まずは <code>train/</code> ディレクトリ内の画像名を取得する部分を構築しよう。
+特定のディレクトリからファイルパスを取得する場合、<a href="/posts/linux-ml-5">第5回</a>で学んだ <code>find</code> コマンドが使える。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> /path/to/dataset
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find train -name <span class="s1">&#39;*.JPG&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="go">train/00000000.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">train/00000001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">train/00000002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p>出力のうち <code>train/</code> の部分は不要なので、<a href="/posts/linux-ml-7"><code>cut</code> コマンド</a>で削除しよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> find train -name <span class="s1">&#39;*.JPG&#39;</span> <span class="p">|</span> cut -d/ -f2
+</span></span><span class="line"><span class="cl"><span class="go">00000000.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">00000001.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">00000002.JPG
+</span></span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><p><code>val/</code> ディレクトリ内の画像名を取得する場合も同様だ。</p>
+<p>これで、<code>xargs</code> の <code>{}</code> にセットする値の一覧ができた。
+あとは、このパイプラインを <code>xargs</code> に接続すればいい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># サムネイルを作成する処理</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># train/ ディレクトリ</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find train -name <span class="s1">&#39;*.JPG&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span><span class="go">  | cut -d/ -f2 \
+</span></span></span><span class="line"><span class="cl"><span class="go">  | xargs -I{} \
+</span></span></span><span class="line"><span class="cl"><span class="go">      convert train/{} -resize &#39;256x256!&#39; thumbnails/thumb_{}
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># val/ ディレクトリ</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find val -name <span class="s1">&#39;*.JPG&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span><span class="go">  | cut -d/ -f2 \
+</span></span></span><span class="line"><span class="cl"><span class="go">  | xargs -I{} \
+</span></span></span><span class="line"><span class="cl"><span class="go">      convert val/{} -resize &#39;256x256!&#39; thumbnails/thumb_{}
+</span></span></span></code></pre></div><p>これこそが、例題で示した「<code>train/</code> と <code>val/</code> ディレクトリにある画像を検索して、
+それぞれの画像のサムネイルを <code>thumbnails/</code> に保存する」処理をするコマンドだ。</p>
+<p>上記のコマンドを実行すると、次のように画像1枚ごとの <code>convert</code> コマンドが自動的に実行される。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000000.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00000000.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000001.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00000001.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert train/00000002.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00000002.JPG
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> convert val/00010000.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00010000.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert val/00010001.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00010001.JPG
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> convert val/00010002.JPG -resize <span class="s1">&#39;256x256!&#39;</span> thumbnails/thumb_00010002.JPG
+</span></span><span class="line"><span class="cl"><span class="go">...
+</span></span></span></code></pre></div><blockquote>
+<p><strong>📔 ノート</strong></p>
 <ul>
-<li><a href="https://jekyllrb.com/docs/home">Jekyll docs</a>: more info on how to get the most out of Jekyll.</li>
-<li><a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>: File all bugs/feature requests.</li>
-<li>If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</li>
+<li>
+<p>「サムネイルを作成する処理」として示したコマンドの途中にある <code>\</code> は
+「改行を無視して、1行のコマンドと見なす」という意味をもつ。
+長いコマンドを見やすくするために改行しているだけなので、実際に入力するときには1行のコマンドとして記述して問題ない。</p>
+</li>
+<li>
+<p>このシリーズではまだ紹介していない機能だが、シェル（bash）の <code>for</code> ループを使えば
+ディレクトリ名を書き直す作業を省略できる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># &#34;train&#34; と &#34;val&#34; を train_val 変数に代入してループ</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="k">for</span> train_val in train val<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl"><span class="go">    find ${train_val} -name &#39;*.JPG&#39; \
+</span></span></span><span class="line"><span class="cl"><span class="go">    | cut -d/ -f2 \
+</span></span></span><span class="line"><span class="cl"><span class="go">    | xargs -I{} \
+</span></span></span><span class="line"><span class="cl"><span class="go">        convert dataset/${train_val}/{} -resize &#39;256x256!&#39; \
+</span></span></span><span class="line"><span class="cl"><span class="go">        dataset/thumbnails/thumb_{}
+</span></span></span><span class="line"><span class="cl"><span class="go">done
+</span></span></span></code></pre></div><p>ループ処理をはじめとするシェルのプログラミング機能については、別の記事で詳しく紹介する予定だ。</p>
+</li>
 </ul>
+</blockquote>
+<h2 id="並列化">並列化</h2>
+<p>先ほどのコマンドでは <code>convert</code> が画像1枚ごとに実行されるが、
+<a href="/posts/linux-ml-9">前回紹介した</a> <code>xargs</code> の <code>-P</code> オプションを使えば、並列処理によって変換時間を短くできる。
+例えば <code>xargs -P8</code> を指定すれば、最大8つの <code>convert</code> プロセスが同時に実行される。</p>
+<p>処理をもっとも効率よく進められる <code>-P</code> の値は、一概には決められない。
+<strong>CPUの論理コア数と同じ値にする</strong>（理論上はCPUを100%活用できる）というのが目安の1つになるが、処理の内容やマシンの性能、負荷状況などの要因で、これが最適な値とならないこともある。</p>
+<p>論理コア数を出発点としつつ、システムの負荷状況（どの処理がボトルネックになっているか）をみて値を増減させる、というのが一般的だ。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># サムネイル作成処理（並列実行）</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># -P8 はコア数などに応じて適宜調整</span>
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># train/ の処理</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find train -name <span class="s1">&#39;*.JPG&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span><span class="go">  | cut -d/ -f2 \
+</span></span></span><span class="line"><span class="cl"><span class="go">  | xargs -I{} -P8 \
+</span></span></span><span class="line"><span class="cl"><span class="go">      convert train/{} -resize &#39;256x256!&#39; thumbnails/thumb_{}
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># val/ の処理も同様</span>
+</span></span></code></pre></div><h2 id="ファイル名にスペースや改行が含まれる場合">ファイル名にスペースや改行が含まれる場合</h2>
+<p>この例題ではファイル名が <code>00000000.JPG</code> のようなフォーマットで、
+スペースや改行などが名前に含まれないと想定した。
+機械学習の現場で使うデータセットには、ファイル名を連番にするなどの命名規則がある場合が多く、
+こうした仮定ができるケースが大半だ。</p>
+<p>一方、こうした命名規則がない場合、これまで見たコマンドは正しく処理を完了できない可能性がある。
+ファイル名に空白などの文字が含まれていると、<code>xargs</code> がその文字を入力値の切れ目（デリミタ）と見なしてしまうからだ。</p>
+<p><a href="/posts/linux-ml-8">前回の記事</a>で見たように、ヌル文字をファイル名の区切りとすれば、どんなファイル名でも処理できるようになる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># サムネイルを作成する処理</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ファイル名にスペースや改行などが含まれる場合は、</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># ヌル文字を区切りとする (find -print0, cut -z, xargs -0)</span>
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># train/ の処理</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> find train -name <span class="s1">&#39;*.JPG&#39;</span> -print0 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span><span class="go">  | cut -z -d/ -f2 \
+</span></span></span><span class="line"><span class="cl"><span class="go">  | xargs -0 -P8 -I{} \
+</span></span></span><span class="line"><span class="cl"><span class="go">      convert train/{} -resize &#39;256x256!&#39; thumbnails/thumb_{}
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># val/ の処理も同様</span>
+</span></span></code></pre></div><p>これで、あらゆるファイル名を正しく処理でき、しかも並列処理で画像サムネイルを生成するコマンドができた。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>ここまでの数回の記事では、「Linuxコマンドラインのコンセプト」と題してLinuxコマンドラインの特徴を紹介した。
+いくつかのコマンドをパイプや <code>xargs</code> で組み合わせれば、本記事の例題で示したような複雑な作業も可能になる。</p>
+<p>こうしたコマンドの組み合わせを支えるのが「テキスト指向性」、つまり
+コマンドの入出力はテキスト形式（テキストストリーム）であるという原則だ。
+Linux（と、その祖先であるUNIX）にはこのような設計上の原則がいくつかあり、
+これらはまとめて<strong>UNIX哲学</strong>と呼ばれることもある。</p>
+<p>次回以降の記事では、ファイルとディレクトリの操作を行うコマンドを紹介していこう。
+UNIX哲学には「すべてのものはファイルである (Everything is a file)」という原則もあり、
+Linux においてはファイルが重要な意味をもっている。
+ファイル操作に習熟すると、Linux 上でいろいろなタスクを実行できるようになる。</p>
+<p>それでは、次回の記事もお楽しみに！</p>
 <ul class="pa0">
-  
-   <li class="list di">
-     <a href="/tags/linux/" class="link f5 grow no-underline br-pill ba ph3 pv2 mb2 dib black sans-serif">linux</a>
-   </li>
   
 </ul>
 <div class="mt6 instapaper_ignoref">
       
       
       </div>
-    </div>
+    </section>
 
     <aside class="w-30-l mt6-l">
 
@@ -238,16 +471,52 @@ Linux の扱いはお手の物。</p>
   </article>
 
     </main>
-    <footer class="bg-navy bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://example.org/" >
-    &copy;  yumem.io 2022 
-  </a>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
     <div>
+      
+
 <div class="ananke-socials">
   
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
 </div>
-</div>
+
+    </div>
   </div>
 </footer>
 
