@@ -9,6 +9,22 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 10:54:11 +0000</lastBuildDate><atom:link href="https://yumem.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>mkdir と rmdir でディレクトリを操作する</title>
+      <link>https://yumem.io/posts/linux-ml-11/</link>
+      <pubDate>Sun, 09 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/linux-ml-11/</guid>
+      <description>この記事は、シリーズ 機械学習エンジニアのためのLinux の第11回です。
+概要 前回の記事までで、 コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。
+今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。 この記事では、ディレクトリの操作に必要な mkdir と rmdir という2つのコマンドを紹介しよう。
+mkdir: 空のディレクトリを作成する mkdir は、空のディレクトリを作成するコマンドだ。 Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは mkdir が同じ働きをする。
+$ mkdir &amp;lt;作成するディレクトリのパス&amp;gt; 例えば、ホームディレクトリ直下に secret_images というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。
+$ mkdir ~/secret_images $ ls ~ secret_images ダウンロード デスクトップ ビデオ ミュージック snap テンプレート ドキュメント ピクチャ 公開 複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。 secret_documents と secret_videos という2つのディレクトリを作成してみよう。
+$ mkdir ~/secret_documents ~/secret_videos ちなみに、すでに存在するディレクトリを作成しようとすると、mkdir はエラーを返す。
+$ mkdir ~/secret_images mkdir: ディレクトリ `/home/yumemio/secret_images&amp;#39; を作成できません: ファイルが存在します -p オプション: 親ディレクトリも作成する mkdir には -p オプションという便利なオプションがある。 これを使うと、次の2つのことが起こる。</description>
+    </item>
+    
+    <item>
       <title>ImageMagick ＋ xargs で大量の画像をリサイズする</title>
       <link>https://yumem.io/posts/linux-ml-10/</link>
       <pubDate>Sun, 02 Jul 2023 00:00:00 +0000</pubDate>

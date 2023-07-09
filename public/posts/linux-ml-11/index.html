@@ -1,0 +1,476 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>mkdir と rmdir でディレクトリを操作する | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第11回です。
+概要 前回の記事までで、 コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。
+今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。 この記事では、ディレクトリの操作に必要な mkdir と rmdir という2つのコマンドを紹介しよう。
+mkdir: 空のディレクトリを作成する mkdir は、空のディレクトリを作成するコマンドだ。 Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは mkdir が同じ働きをする。
+$ mkdir &lt;作成するディレクトリのパス&gt; 例えば、ホームディレクトリ直下に secret_images というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。
+$ mkdir ~/secret_images $ ls ~ secret_images ダウンロード デスクトップ ビデオ ミュージック snap テンプレート ドキュメント ピクチャ 公開 複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。 secret_documents と secret_videos という2つのディレクトリを作成してみよう。
+$ mkdir ~/secret_documents ~/secret_videos ちなみに、すでに存在するディレクトリを作成しようとすると、mkdir はエラーを返す。
+$ mkdir ~/secret_images mkdir: ディレクトリ `/home/yumemio/secret_images&#39; を作成できません: ファイルが存在します -p オプション: 親ディレクトリも作成する mkdir には -p オプションという便利なオプションがある。 これを使うと、次の2つのことが起こる。">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="mkdir と rmdir でディレクトリを操作する" />
+<meta property="og:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第11回です。
+概要 前回の記事までで、 コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。
+今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。 この記事では、ディレクトリの操作に必要な mkdir と rmdir という2つのコマンドを紹介しよう。
+mkdir: 空のディレクトリを作成する mkdir は、空のディレクトリを作成するコマンドだ。 Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは mkdir が同じ働きをする。
+$ mkdir &lt;作成するディレクトリのパス&gt; 例えば、ホームディレクトリ直下に secret_images というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。
+$ mkdir ~/secret_images $ ls ~ secret_images ダウンロード デスクトップ ビデオ ミュージック snap テンプレート ドキュメント ピクチャ 公開 複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。 secret_documents と secret_videos という2つのディレクトリを作成してみよう。
+$ mkdir ~/secret_documents ~/secret_videos ちなみに、すでに存在するディレクトリを作成しようとすると、mkdir はエラーを返す。
+$ mkdir ~/secret_images mkdir: ディレクトリ `/home/yumemio/secret_images&#39; を作成できません: ファイルが存在します -p オプション: 親ディレクトリも作成する mkdir には -p オプションという便利なオプションがある。 これを使うと、次の2つのことが起こる。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/linux-ml-11/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-09T00:00:00+00:00" />
+
+
+<meta itemprop="name" content="mkdir と rmdir でディレクトリを操作する">
+<meta itemprop="description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第11回です。
+概要 前回の記事までで、 コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。
+今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。 この記事では、ディレクトリの操作に必要な mkdir と rmdir という2つのコマンドを紹介しよう。
+mkdir: 空のディレクトリを作成する mkdir は、空のディレクトリを作成するコマンドだ。 Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは mkdir が同じ働きをする。
+$ mkdir &lt;作成するディレクトリのパス&gt; 例えば、ホームディレクトリ直下に secret_images というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。
+$ mkdir ~/secret_images $ ls ~ secret_images ダウンロード デスクトップ ビデオ ミュージック snap テンプレート ドキュメント ピクチャ 公開 複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。 secret_documents と secret_videos という2つのディレクトリを作成してみよう。
+$ mkdir ~/secret_documents ~/secret_videos ちなみに、すでに存在するディレクトリを作成しようとすると、mkdir はエラーを返す。
+$ mkdir ~/secret_images mkdir: ディレクトリ `/home/yumemio/secret_images&#39; を作成できません: ファイルが存在します -p オプション: 親ディレクトリも作成する mkdir には -p オプションという便利なオプションがある。 これを使うと、次の2つのことが起こる。"><meta itemprop="datePublished" content="2023-07-09T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-07-09T00:00:00+00:00" />
+<meta itemprop="wordCount" content="438">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="mkdir と rmdir でディレクトリを操作する"/>
+<meta name="twitter:description" content="この記事は、シリーズ 機械学習エンジニアのためのLinux の第11回です。
+概要 前回の記事までで、 コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。
+今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。 この記事では、ディレクトリの操作に必要な mkdir と rmdir という2つのコマンドを紹介しよう。
+mkdir: 空のディレクトリを作成する mkdir は、空のディレクトリを作成するコマンドだ。 Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは mkdir が同じ働きをする。
+$ mkdir &lt;作成するディレクトリのパス&gt; 例えば、ホームディレクトリ直下に secret_images というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。
+$ mkdir ~/secret_images $ ls ~ secret_images ダウンロード デスクトップ ビデオ ミュージック snap テンプレート ドキュメント ピクチャ 公開 複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。 secret_documents と secret_videos という2つのディレクトリを作成してみよう。
+$ mkdir ~/secret_documents ~/secret_videos ちなみに、すでに存在するディレクトリを作成しようとすると、mkdir はエラーを返す。
+$ mkdir ~/secret_images mkdir: ディレクトリ `/home/yumemio/secret_images&#39; を作成できません: ファイルが存在します -p オプション: 親ディレクトリも作成する mkdir には -p オプションという便利なオプションがある。 これを使うと、次の2つのことが起こる。"/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b serif tracked">
+        
+          
+          <a href="https://yumem.io/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux/" class="dim link 
+           gray">
+              機械学習エンジニアのためのLinux
+          </a>
+          
+        
+      </aside>
+      <h1 class="f2 serif mt3 mb1">mkdir と rmdir でディレクトリを操作する</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-07-09T00:00:00Z">
+        
+        2023年7月9日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/linux-ml-11/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/linux-ml-11/&amp;text=mkdir%20%e3%81%a8%20rmdir%20%e3%81%a7%e3%83%87%e3%82%a3%e3%83%ac%e3%82%af%e3%83%88%e3%83%aa%e3%82%92%e6%93%8d%e4%bd%9c%e3%81%99%e3%82%8b" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><p>この記事は、シリーズ <a href="/series/%E6%A9%9F%E6%A2%B0%E5%AD%A6%E7%BF%92%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AElinux">機械学習エンジニアのためのLinux</a> の第11回です。</p>
+<h2 id="概要">概要</h2>
+<p><a href="/posts/linux-ml-10">前回の記事</a>までで、
+コマンドを組み合わせて複雑な処理ができるという Linux コマンドラインの特徴を紹介した。</p>
+<p>今回からは、ファイルとディレクトリの操作を行うコマンドを紹介する。
+この記事では、ディレクトリの操作に必要な <code>mkdir</code> と <code>rmdir</code> という2つのコマンドを紹介しよう。</p>
+<h2 id="mkdir-空のディレクトリを作成する"><code>mkdir</code>: 空のディレクトリを作成する</h2>
+<p><code>mkdir</code> は、空のディレクトリを作成するコマンドだ。
+Windows や Mac OS では、エクスプローラや Finder を使って空のフォルダを作ることができるが、Linux コマンドラインでは <code>mkdir</code> が同じ働きをする。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir &lt;作成するディレクトリのパス&gt;
+</span></span></code></pre></div><p>例えば、ホームディレクトリ直下に <code>secret_images</code> というディレクトリを作成したい場合は、次のようなコマンドを実行すればいい。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir ~/secret_images
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ls ~
+</span></span><span class="line"><span class="cl"><span class="go">secret_images  ダウンロード  デスクトップ  ビデオ    ミュージック
+</span></span></span><span class="line"><span class="cl"><span class="go">snap           テンプレート  ドキュメント  ピクチャ  公開
+</span></span></span></code></pre></div><p>複数のディレクトリパスを渡せば、一度に複数のディレクトリを作成することもできる。
+<code>secret_documents</code> と <code>secret_videos</code> という2つのディレクトリを作成してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir ~/secret_documents ~/secret_videos
+</span></span></code></pre></div><p>ちなみに、すでに存在するディレクトリを作成しようとすると、<code>mkdir</code> はエラーを返す。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir ~/secret_images
+</span></span><span class="line"><span class="cl"><span class="go">mkdir: ディレクトリ `/home/yumemio/secret_images&#39; を作成できません: ファイルが存在します
+</span></span></span></code></pre></div><h3 id="-p-オプション-親ディレクトリも作成する"><code>-p</code> オプション: 親ディレクトリも作成する</h3>
+<p><code>mkdir</code> には <code>-p</code> オプションという便利なオプションがある。
+これを使うと、次の2つのことが起こる。</p>
+<ol>
+<li>作成するディレクトリの親ディレクトリなど、上位（祖先）のディレクトリが存在しない場合は、自動的に上位のディレクトリも作成する</li>
+<li>作成しようとしたディレクトリが存在する場合も、エラーにならない</li>
+</ol>
+<p>例えば、<code>~/my_diary/2023</code> というディレクトリを作成したいとしよう。
+オプションなしの <code>mkdir</code> コマンドでは、<code>~/my_diary</code> ディレクトリが存在しなければ <code>~/my_diary/2023</code> を作成できない。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir ~/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="go">mkdir: ディレクトリ `/home/yumemio/my_diary/2023&#39; を作成できません: そのようなファイルやディレクトリはありません
+</span></span></span></code></pre></div><p><code>-p</code> オプションをつけると、必要な上位ディレクトリ（<code>my_diary</code>）も自動的に作成してくれる。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir -p ~/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ls ~/my_diary
+</span></span><span class="line"><span class="cl"><span class="go">2023
+</span></span></span></code></pre></div><p>このオプションは、<code>build/var/lib/jenkins/workspace</code> のような深い階層をもつディレクトリ構造を作成するときに、特に便利だ。</p>
+<blockquote>
+<p>📔 <strong>ノート</strong></p>
+<p>一部の環境では<strong>ブレース展開</strong> (brace expansion) という機能を使って、たくさんのディレクトリを一気に作成することができる。「ブレース」というのは中括弧 (<code>{}</code>) のことだ。</p>
+<p>たとえば、<code>train/annotations</code> と <code>val/annotations</code> というディレクトリを作成したいとしよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir -p train/annotations val/annotations
+</span></span></code></pre></div><p>上記のように書いてもよいのだが、2つのパスに共通する <code>/annotations</code> という文字を2回書く必要があり面倒だ。</p>
+<p>これを、ブレース展開を使った形に書き直してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># このコマンドは、1つ前のコマンドと等価</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> mkdir -p <span class="o">{</span>train,val<span class="o">}</span>/annotations
+</span></span></code></pre></div><p>すっきりした見た目になった。</p>
+<p>このように<strong>カンマ区切りで項目を羅列する</strong>と、引数が各項目と他の部分の組み合わせに展開されてからコマンドが実行される。</p>
+<ul>
+<li><code>{train,val}</code> は <code>train</code> と <code>val</code></li>
+<li><code>{train,val,test}_images</code> は <code>train_images</code>, <code>val_images</code>, <code>test_images</code></li>
+</ul>
+<p>に展開される、というわけだ。</p>
+<p>さらに、<code>{始点..終点}</code> のようにピリオド2つを使うと、連続する番号やアルファベットのディレクトリ名を作成できる。</p>
+<ul>
+<li><code>{0..127}</code> は <code>0</code>, <code>1</code>, &hellip;, <code>127</code></li>
+<li><code>{a..z}</code> は <code>a</code>, <code>b</code>, &hellip;, <code>z</code></li>
+</ul>
+<p>に、それぞれ展開される。</p>
+<p>複数のブレース展開を組み合わせることも可能だ。
+例えば、次のコマンドは <code>train</code> と <code>val</code> ディレクトリのそれぞれの下に <code>class_1</code>、<code>class_2</code>、&hellip;、<code>class_99</code> ディレクトリを作成する。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> mkdir -p <span class="o">{</span>train,val<span class="o">}</span>/class_<span class="o">{</span>1..99<span class="o">}</span>
+</span></span></code></pre></div></blockquote>
+<h2 id="rmdir-空のディレクトリを削除する"><code>rmdir</code>: 空のディレクトリを削除する</h2>
+<p><code>mkdir</code> の対極に位置するのが <code>rmdir</code> コマンドだ。<code>mkdir</code> が空のディレクトリを作成するのに対し、<code>rmdir</code> は<strong>空の</strong>ディレクトリを削除する。</p>
+<p><code>rmdir</code> の使い方も <code>mkdir</code> とそっくりだ。次のように、引数としてディレクトリパスを渡す。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> rmdir &lt;削除するディレクトリのパス&gt;
+</span></span></code></pre></div><p>例えば、先ほど作成した <code>~/secret_images</code> ディレクトリを削除したい場合は、次のようにする。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> rmdir ~/secret_images
+</span></span></code></pre></div><p>注意点として、ディレクトリが空でない、つまりファイルや他のディレクトリが入っている場合は <code>rmdir</code> で削除できない。
+中身のファイルごと削除する場合は、第13回の記事で紹介する <code>rm -r</code> を使う必要がある。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># rmdir は空でないディレクトリを削除できない</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ls ~/secret_videos
+</span></span><span class="line"><span class="cl"><span class="go">anime  geiger_conter.m4a  toys.m4a
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> rmdir ~/secret_videos
+</span></span><span class="line"><span class="cl"><span class="go">rmdir: &#39;secret_videos/&#39; を削除できません: ディレクトリは空ではありません
+</span></span></span></code></pre></div><h3 id="-p-オプション-空の親ディレクトリも削除する"><code>-p</code> オプション: 空の親ディレクトリも削除する</h3>
+<p><code>rmdir</code> にも <code>-p</code> オプションがある。
+<code>-p</code> オプションをつけると、指定したパスに含まれるすべてのディレクトリを削除することができる。
+ただし、空でないディレクトリや、ユーザが削除する権限のないディレクトリは削除できない。</p>
+<p>先ほど作成した <code>~/my_diary/2023</code> ディレクトリを削除してみよう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">cd</span> ~
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># 削除する前のホームディレクトリ</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ls
+</span></span><span class="line"><span class="cl"><span class="go">my_diary  ダウンロード  デスクトップ  ビデオ    ミュージック
+</span></span></span><span class="line"><span class="cl"><span class="go">snap      テンプレート  ドキュメント  ピクチャ  公開
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># rmdir で削除</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir -p my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># 削除した後のホームディレクトリ</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> ls
+</span></span><span class="line"><span class="cl"><span class="go">snap          テンプレート  ドキュメント  ピクチャ      公開
+</span></span></span><span class="line"><span class="cl"><span class="go">ダウンロード  デスクトップ  ビデオ        ミュージック
+</span></span></span></code></pre></div><p><code>my_diary</code> ディレクトリと <code>2023</code> ディレクトリがどちらも削除された。</p>
+<blockquote>
+<p>📔 <strong>ノート</strong></p>
+<p><code>rmdir -p</code> コマンドは、パスに含まれるすべてのディレクトリの削除を試みる。
+このため、相対パスを使う場合と、絶対パスを渡す場合とのあいだで、微妙な違いが生まれることがある。</p>
+<p>上記の例では <code>my_diary/2023</code> のように相対パスを指定したが、<code>rmdir -p ~/my_diary/2023</code> のように絶対パスを指定すると、どうなるだろう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> rmdir -p ~/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="go">rmdir: ディレクトリ &#39;/home/yumemio&#39; の削除に失敗しました: 許可がありません
+</span></span></span><span class="line"><span class="cl"><span class="go"></span><span class="gp">$</span> ls ~
+</span></span><span class="line"><span class="cl"><span class="go">snap          テンプレート  ドキュメント  ピクチャ      公開
+</span></span></span><span class="line"><span class="cl"><span class="go">ダウンロード  デスクトップ  ビデオ        ミュージック
+</span></span></span></code></pre></div><p><code>my_diary</code> ディレクトリは削除できたが、「<code>/home/yumemio</code> が削除できない」というエラーメッセージが表示された。
+なぜエラーが起こるのだろう。</p>
+<p>これは、<code>rmdir -p</code> がパスに含まれるすべてのディレクトリを削除しようとするからだ。</p>
+<p>先ほどの例で、相対パスを指定してディレクトリを削除した場合、パスに含まれるディレクトリは
+<code>my_diary</code> と <code>2023</code> の2つだ。
+<code>rmdir -p my_diary/2023</code> を実行すると、これら2つのディレクトリが階層の深いものから削除されていく。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># このコマンドは...</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir -p my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># このコマンドと等価</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir my_diary
+</span></span></code></pre></div><p>一方、絶対パスを <code>rmdir</code> に渡す場合、<code>~</code> は <code>/home/yumemio</code> (ユーザ名が <code>yumemio</code> の場合) と解釈される。</p>
+<p>このため、絶対パス版の<code>rmdir -p</code> は <code>home</code>、<code>yumemio</code>、<code>my_diary</code>、<code>2023</code> の4つのディレクトリを削除しようとする。
+しかし、ホームディレクトリである <code>/home/yumemio</code> は通常のユーザ権限では削除できない。
+このため、先ほどのようなエラーになってしまう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># このコマンドは...</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir -p ~/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># このコマンドと等価であり...</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir -p /home/yumemio/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="gp">$</span> <span class="c1"># このコマンドとも等価</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> <span class="c1"># （実際には /home/yumemio が削除できず、エラー終了する）</span>
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir /home/yumemio/my_diary/2023
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir /home/yumemio/my_diary
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir /home/yumemio
+</span></span><span class="line"><span class="cl"><span class="gp">$</span> rmdir /home
+</span></span></code></pre></div></blockquote>
+<h2 id="まとめ">まとめ</h2>
+<p>今回は、ディレクトリの作成に使う <code>mkdir</code> コマンドと、ディレクトリを削除する <code>rmdir</code> コマンドについて紹介した。</p>
+<p>大量のファイルを扱う機械学習分野では、適切なディレクトリ構造を作成してファイルを保存することが重要だ。
+今回紹介したコマンドを使えば、思いどおりにディレクトリを作成・削除することができるはずだ。</p>
+<p>次回以降の記事では、ファイルの移動やコピー、削除などの操作について紹介しよう。
+特に「大量のファイルを効率よく操作する」ことを焦点にあてて、各種コマンドの説明をしていく予定だ。</p>
+<p>それでは、次回の記事もお楽しみに！</p>
+<blockquote>
+<p><strong>🎯 まとめ</strong></p>
+<ul>
+<li><strong><code>mkdir</code></strong>: 空のディレクトリを作成するコマンド
+<ul>
+<li><strong><code>mkdir ~/my_diary</code></strong>: ホームディレクトリに <code>my_diary</code> ディレクトリを作成する</li>
+<li><strong><code>-p</code> オプション</strong>: 上位のディレクトリも作成する。ディレクトリが既に存在する場合もエラーにならない。</li>
+</ul>
+</li>
+<li><strong><code>rmdir</code></strong>: 空のディレクトリを削除するコマンド
+<ul>
+<li><strong><code>rmdir ~/my_diary</code></strong>: <code>~/my_diary</code> ディレクトリを作成する</li>
+<li><strong><code>-p</code> オプション</strong>: パスに含まれるすべてのディレクトリを削除する。ただし、ディレクトリが空でなければエラーになる。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>❓ 練習課題</strong></p>
+<ul>
+<li>次の操作をするコマンドを作成してみよう。
+<ul>
+<li><code>/tmp/mycache</code> というディレクトリを作成するコマンド。<code>/tmp</code> ディレクトリは既にあると仮定してよい。</li>
+<li>ホームディレクトリに <code>experiment/0001/result/images</code> と
+<code>experiment/0002/result/images</code> という2つのディレクトリを作成するコマンド</li>
+<li>上記のディレクトリをすべて削除するコマンド</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
