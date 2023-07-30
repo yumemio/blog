@@ -8,6 +8,13 @@
     border-bottom: solid 1px #333;
 }
 
+/* Make inline code distinct */
+p code {
+    background-color: #dddddd;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
 /* Higier contrast ratio for accessibility */
 .nested-links a {
     color: #0066cc;
