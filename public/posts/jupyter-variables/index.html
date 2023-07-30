@@ -56,8 +56,8 @@ PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} 
 PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://yumem.io/posts/jupyter-variables/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2023-07-28T00:00:00+00:00" />
-<meta property="article:modified_time" content="2023-07-28T00:00:00+00:00" />
+<meta property="article:published_time" content="2023-07-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-30T00:00:00+00:00" />
 
 <meta itemprop="name" content="[Colab, Jupyter] シェルコマンドや %env の中で変数を使う">
 <meta itemprop="description" content="TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
@@ -67,8 +67,8 @@ PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} 
 %env key=$py_var %env key=
 {os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
 再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
-PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。"><meta itemprop="datePublished" content="2023-07-28T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2023-07-28T00:00:00+00:00" />
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。"><meta itemprop="datePublished" content="2023-07-30T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-07-30T00:00:00+00:00" />
 <meta itemprop="wordCount" content="612">
 <meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="[Colab, Jupyter] シェルコマンドや %env の中で変数を使う"/>
@@ -186,9 +186,9 @@ PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} 
       <h1 class="f2 sans-serif mt3 mb1">[Colab, Jupyter] シェルコマンドや %env の中で変数を使う</h1>
       
       
-      <time class="mv2 dib tracked" datetime="2023-07-28T00:00:00Z">
+      <time class="mv2 dib tracked" datetime="2023-07-30T00:00:00Z">
         
-        2023年7月28日
+        2023年7月30日
       </time>
       
 
