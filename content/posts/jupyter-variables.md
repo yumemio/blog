@@ -1,9 +1,9 @@
 ---
 title: "[Colab, Jupyter] シェルコマンドや %env の中で変数を使う"
-date: 2023-07-28
+date: 2023-07-30
 draft: false
 
-featured_image: "/images/lmle/11-mkdir-rmdir/hero.jpg"
+featured_image: "/images/post/jupyter-variables/hero.jpg"
 
 ---
 
