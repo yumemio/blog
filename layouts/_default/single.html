@@ -18,7 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
   {{ $section := .Site.GetPage "section" .Section }}
   <article class="flex-l flex-wrap justify-between mw8 center ph3">
     <header class="mv4 w-100">
-      <aside class="instapaper_ignoref b serif tracked">
+      <aside class="instapaper_ignoref b sans-serif tracked">
         {{ if isset .Params "series" }}
           {{ range (.GetTerms "series") | first 1 }}
           <a href="{{ .Permalink }}" class="dim link 
@@ -37,7 +37,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           </span>
         {{ end }}
       </aside>
-      <h1 class="f2 serif mt3 mb1">
+      <h1 class="f2 sans-serif mt3 mb1">
         {{- .Title -}}
       </h1>
       {{/* Hugo uses Go's date formatting is set by example. Here are two formats */}}
@@ -62,7 +62,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       {{ end }}
     </header>
     <section class="nested-copy-line-height lh-copy {{ $.Param
-        "post_content_classes"  | default "serif"}} nested-links {{ $.Param
+        "post_content_classes"  | default "sans-serif"}} nested-links {{ $.Param
         "text_color" | default "mid-gray" }} {{ cond (eq
         $.Site.Language.LanguageDirection "rtl") "pl4-l" "pr4-l" }}
         w-two-thirds-l f5" id="content">

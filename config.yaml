@@ -45,7 +45,7 @@ params:
   custom_css:
     - css/custom.css
     - css/syntax-monokai.css
-  body_classes: "serif bg-white"
+  body_classes: "sans-serif bg-white"
   background_color_class: "bg-navy"
   hasCJKLanguage: True
   ananke_socials:
