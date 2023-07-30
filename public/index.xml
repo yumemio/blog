@@ -11,7 +11,7 @@
     <item>
       <title>[Colab, Jupyter] シェルコマンドや %env の中で変数を使う</title>
       <link>https://yumem.io/posts/jupyter-variables/</link>
-      <pubDate>Fri, 28 Jul 2023 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 30 Jul 2023 00:00:00 +0000</pubDate>
       
       <guid>https://yumem.io/posts/jupyter-variables/</guid>
       <description>TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
