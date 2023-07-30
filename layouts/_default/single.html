@@ -21,7 +21,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
       <aside class="instapaper_ignoref b sans-serif tracked">
         {{ if isset .Params "series" }}
           {{ range (.GetTerms "series") | first 1 }}
-          <a href="{{ .Permalink }}" class="dim link 
+          <a href="{{ .Permalink }}" class="link 
            {{ $.Site.Params.text_secondary_color | default "gray" }}">
               {{ .LinkTitle }}
           </a>

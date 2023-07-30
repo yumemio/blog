@@ -18,7 +18,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         {{/* Trimming the slash and adding absURL make sure the image works no matter where our site lives */}}
         <div class="{{ cond (eq $.Site.Language.LanguageDirection "rtl")
           "pl3-ns" "pr3-ns" }} mb4 mb0-ns w-100 w-20-ns">
-          <a href="{{.RelPermalink}}" class="db grow">
+          <a href="{{.RelPermalink}}" class="db dim">
             <img src="{{ $featured_image }}" class="img" alt="image from {{ .Title }}">
           </a>
         </div>
@@ -29,7 +29,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           {{i18n "lastUpdatedAt"}} {{ dateFormat $localDateFormat .Date }}
         </div>
         <h2 class="f3 b mv2 lh-title">
-          <a href="{{.RelPermalink}}" class="color-inherit dim link">
+          <a href="{{.RelPermalink}}" class="color-inherit link">
             {{ .Title }}
           </a>
         </h2>

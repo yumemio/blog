@@ -19,6 +19,12 @@
     text-decoration-thickness: 3px;
 }
 
+a.link:hover,
+a.link:focus {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+}
+
 /* Tables */
 table {
     border-collapse: collapse;
