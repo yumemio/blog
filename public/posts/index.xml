@@ -9,6 +9,22 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>[Colab, Jupyter] シェルコマンドや %env の中で変数を使う</title>
+      <link>https://yumem.io/posts/jupyter-variables/</link>
+      <pubDate>Fri, 28 Jul 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/jupyter-variables/</guid>
+      <description>TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
+説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。
+表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法 Python の変数にアクセス 環境変数にアクセス シェルコマンド内で !echo {py_var}
+!echo $py_var† !echo $$PATH %env コマンド内で %env key={py_var}
+%env key=$py_var %env key=
+{os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
+再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&amp;#39;PATH&amp;#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&amp;#39;/path/to/my/pylib&amp;#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。</description>
+    </item>
+    
+    <item>
       <title>mkdir と rmdir でディレクトリを操作する</title>
       <link>https://yumem.io/posts/linux-ml-11/</link>
       <pubDate>Sun, 09 Jul 2023 00:00:00 +0000</pubDate>

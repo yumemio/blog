@@ -1,0 +1,552 @@
+
+<!DOCTYPE html>
+<html lang="ja-jp">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>[Colab, Jupyter] シェルコマンドや %env の中で変数を使う | yumem.io</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
+説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。
+表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法 Python の変数にアクセス 環境変数にアクセス シェルコマンド内で !echo {py_var}
+!echo $py_var† !echo $$PATH %env コマンド内で %env key={py_var}
+%env key=$py_var %env key=
+{os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
+再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。">
+    <meta name="generator" content="Hugo 0.107.0">
+    
+    
+    
+    
+      <meta name="robots" content="index, follow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.7a6d0c50426707636ca95b541748390167f483889220dc2544526f35b956c52a.css" >
+
+
+
+  
+    <link rel="stylesheet" href="/css/custom.css">
+  
+
+  
+    <link rel="stylesheet" href="/css/syntax-monokai.css">
+  
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="[Colab, Jupyter] シェルコマンドや %env の中で変数を使う" />
+<meta property="og:description" content="TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
+説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。
+表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法 Python の変数にアクセス 環境変数にアクセス シェルコマンド内で !echo {py_var}
+!echo $py_var† !echo $$PATH %env コマンド内で %env key={py_var}
+%env key=$py_var %env key=
+{os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
+再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://yumem.io/posts/jupyter-variables/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-07-28T00:00:00+00:00" />
+
+<meta itemprop="name" content="[Colab, Jupyter] シェルコマンドや %env の中で変数を使う">
+<meta itemprop="description" content="TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
+説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。
+表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法 Python の変数にアクセス 環境変数にアクセス シェルコマンド内で !echo {py_var}
+!echo $py_var† !echo $$PATH %env コマンド内で %env key={py_var}
+%env key=$py_var %env key=
+{os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
+再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。"><meta itemprop="datePublished" content="2023-07-28T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2023-07-28T00:00:00+00:00" />
+<meta itemprop="wordCount" content="612">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="[Colab, Jupyter] シェルコマンドや %env の中で変数を使う"/>
+<meta name="twitter:description" content="TL;DR Colab や Jupyter Notebook のシェルコマンド・%env マジックで、Python 変数と環境変数を正しく扱う方法を紹介します。
+説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。
+表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法 Python の変数にアクセス 環境変数にアクセス シェルコマンド内で !echo {py_var}
+!echo $py_var† !echo $$PATH %env コマンド内で %env key={py_var}
+%env key=$py_var %env key=
+{os.environ[&#39;PATH&#39;]} Python のセル内で py_var os.environ[&#39;PATH&#39;] † 個人的には非推奨。py_var が Python 変数として定義されていない場合、$py_var がシェルの変数と解釈されて、紛らわしいことになる。
+再設定頻度が高い環境変数2強の PATH と PYTHONPATH （個人の感想です）は、次のように設定するとよいです。
+PATH の設定 import os %env PATH=/path/to/my/bin:{os.environ[&#39;PATH&#39;]} PYTHONPATH の設定（%env PYTHONPATH は使わない） import sys sys.path.append(&#39;/path/to/my/pylib&#39;) この記事を Jupyter Notebook に変換したものを GitHub Gist で公開しています。 Colab 環境でコードを動かしてみたい場合にご活用ください。"/>
+
+      
+    
+	
+    
+    <link rel="stylesheet" href="/css/custom.css">
+  </head>
+
+  <body class="ma0 sans-serif bg-white production">
+
+    
+   
+  
+
+<header>
+  <div>
+    <h1 class="dn db-l f2 fw10 ma0 mw9 center ph4 ph5-l">
+      <a href="/" class="color-inherit link mt2 dib">
+        <img alt="Website logo" src="/images/common/logo_ja.png" class="db" id="header-logo" />
+        <span class="dn">yumem.io - AI & GIS: 技術の木を育む</span>
+      </a>
+    </h1>
+    
+
+
+
+<nav class="w-100 relative flex-l justify-center top-0 pv2 pv0-l bg-navy z-5" role="navigation">
+  <input type="checkbox" id="burger" class="dn">
+  <label for="burger" class="dn-l fr pr4 f2">
+    <span id="burger-open" class="fa fa-bars white">≡</span>
+    <span id="burger-close" class="fa fa-bars white dn">×</span>
+  </label>
+  <ul class="menu overflow-hidden db-l w-100-l w-80 mw9 list pa0 ma0 mt1-l pv2 f3">
+    <li class="dn-l fl pl4 pl6-l b">
+      <a class="link hover-white white-90" href="/">
+        yumem.io
+      </a>
+    </li>
+    <li class="di-l pl4 pl5-l pt5 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/">
+        HOME
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/about/" title="yumem.io について ページ">
+              YUMEM.IO について
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/posts/" title="記事 ページ">
+              記事
+      </a>
+    </li>
+    
+    <li class="di-l pl4 pl5-l pt2 pb2 f4-ns">
+      <a class="hover-white no-underline white-90" href="/series/" title="連載 ページ">
+              連載
+      </a>
+    </li>
+    
+  </ul>
+</nav>
+
+<style>
+  .menu {
+    min-height: 2.8rem;
+    max-height: 0;  
+  }
+   
+  #burger:checked ~ .menu {
+    max-height: 100%;
+  }
+   
+  #burger:checked ~ * #burger-open {
+    display: none;
+  }
+  #burger:checked ~ * #burger-close {
+    display: inline;
+  }
+</style>
+
+
+    
+  </div>
+</header>
+
+
+
+    <main class="pt2 pb7 relative top-0 mw9 center" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mv4 w-100">
+      <aside class="instapaper_ignoref b sans-serif tracked">
+        
+            
+          <span class="gray">
+          記事
+          </span>
+        
+      </aside>
+      <h1 class="f2 sans-serif mt3 mb1">[Colab, Jupyter] シェルコマンドや %env の中で変数を使う</h1>
+      
+      
+      <time class="mv2 dib tracked" datetime="2023-07-28T00:00:00Z">
+        
+        2023年7月28日
+      </time>
+      
+
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+      
+      <a href="https://www.facebook.com/sharer.php?u=https://yumem.io/posts/jupyter-variables/" class="ananke-social-link facebook no-underline" aria-label="share on Facebook">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M28.765,50.32h6.744V33.998h4.499l0.596-5.624h-5.095  l0.007-2.816c0-1.466,0.14-2.253,2.244-2.253h2.812V17.68h-4.5c-5.405,0-7.307,2.729-7.307,7.317v3.377h-3.369v5.625h3.369V50.32z   M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+      
+      <a href="https://twitter.com/share?url=https://yumem.io/posts/jupyter-variables/&amp;text=[Colab,%20Jupyter]%20%e3%82%b7%e3%82%a7%e3%83%ab%e3%82%b3%e3%83%9e%e3%83%b3%e3%83%89%e3%82%84%20%25env%20%e3%81%ae%e4%b8%ad%e3%81%a7%e5%a4%89%e6%95%b0%e3%82%92%e4%bd%bf%e3%81%86" class="ananke-social-link twitter no-underline" aria-label="share on Twitter">
+        
+        <span class="icon"> <svg style="enable-background:new 0 0 67 67;" version="1.1" viewBox="0 0 67 67"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M37.167,22.283c-2.619,0.953-4.274,3.411-4.086,6.101  l0.063,1.038l-1.048-0.127c-3.813-0.487-7.145-2.139-9.974-4.915l-1.383-1.377l-0.356,1.017c-0.754,2.267-0.272,4.661,1.299,6.271  c0.838,0.89,0.649,1.017-0.796,0.487c-0.503-0.169-0.943-0.296-0.985-0.233c-0.146,0.149,0.356,2.076,0.754,2.839  c0.545,1.06,1.655,2.097,2.871,2.712l1.027,0.487l-1.215,0.021c-1.173,0-1.215,0.021-1.089,0.467  c0.419,1.377,2.074,2.839,3.918,3.475l1.299,0.444l-1.131,0.678c-1.676,0.976-3.646,1.526-5.616,1.568  C19.775,43.256,19,43.341,19,43.405c0,0.211,2.557,1.397,4.044,1.864c4.463,1.377,9.765,0.783,13.746-1.568  c2.829-1.673,5.657-5,6.978-8.221c0.713-1.716,1.425-4.851,1.425-6.354c0-0.975,0.063-1.102,1.236-2.267  c0.692-0.678,1.341-1.419,1.467-1.631c0.21-0.403,0.188-0.403-0.88-0.043c-1.781,0.636-2.033,0.551-1.152-0.402  c0.649-0.678,1.425-1.907,1.425-2.267c0-0.063-0.314,0.042-0.671,0.233c-0.377,0.212-1.215,0.53-1.844,0.72l-1.131,0.361l-1.027-0.7  c-0.566-0.381-1.361-0.805-1.781-0.932C39.766,21.902,38.131,21.944,37.167,22.283z M33,64C16.432,64,3,50.569,3,34S16.432,4,33,4  s30,13.431,30,30S49.568,64,33,64z" style="fill-rule:evenodd;clip-rule:evenodd;"/></svg>
+</span>
+        
+      </a>
+    
+  </div>
+
+
+
+      
+      
+    </header>
+    <section class="nested-copy-line-height lh-copy sans-serif nested-links black pr4-l
+        w-two-thirds-l f5" id="content"><h2 id="tldr">TL;DR</h2>
+<p>Colab や Jupyter Notebook の<strong>シェルコマンド・<code>%env</code> マジック</strong>で、<strong>Python 変数と環境変数</strong>を正しく扱う方法を紹介します。</p>
+<p>説明はいいから概要だけ知りたい、という多忙なエンジニア/データサイエンティストの皆さんは、次の表をご覧ください。</p>
+<h3 id="表-colab--jupyter-におけるpython変数環境変数のアクセス方法">表: Colab / Jupyter におけるPython変数・環境変数のアクセス方法</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Python の変数にアクセス</th>
+<th>環境変数にアクセス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>シェルコマンド内で</td>
+<td><code>!echo {py_var}</code><br />
+<code>!echo $py_var</code><sup>†</sup>
+</td>
+<td><code>!echo $$PATH</code></td>
+</tr>
+<tr>
+<td><code>%env</code> コマンド内で</td>
+<td><code>%env key={py_var}</code><br />
+<code>%env key=$py_var</code></td>
+<td><code>%env key=<br />
+{os.environ['PATH']}</code></td>
+</tr>
+<tr>
+<td>Python のセル内で</td>
+<td><code>py_var</code></td>
+<td><code>os.environ['PATH']</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>† <strong>個人的には非推奨</strong>。<code>py_var</code> が Python 変数として定義されていない場合、<code>$py_var</code> がシェルの変数と解釈されて、紛らわしいことになる。</p>
+</blockquote>
+<p>再設定頻度が高い環境変数2強の <code>PATH</code> と <code>PYTHONPATH</code> （個人の感想です）は、次のように設定するとよいです。</p>
+<ul>
+<li><code>PATH</code> の設定
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">PATH</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="nb">bin</span><span class="p">:{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]}</span>
+</span></span></code></pre></div></li>
+<li><code>PYTHONPATH</code> の設定（<code>%env PYTHONPATH</code> は使わない）
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/path/to/my/pylib&#39;</span><span class="p">)</span>
+</span></span></code></pre></div></li>
+</ul>
+<p>この記事を Jupyter Notebook に変換したものを <a href="https://gist.github.com/yumemio/78aa742bbcaabe6cc2930910e5e0e070">GitHub Gist</a> で公開しています。
+Colab 環境でコードを動かしてみたい場合にご活用ください。</p>
+<h2 id="まえがき">まえがき</h2>
+<p>Jupyter Notebook、皆さんは使ってますか？</p>
+<p>Python などのコードと Markdown で書いた文章を1つのドキュメント形式で扱えるツールです。
+<a href="https://colab.research.google.com">Google Colabolatory</a> のドキュメント形式としても採用されているので、見たことがある人も多いと思います。</p>
+<p>ところで、Jupyter Notebook の中で環境変数をセットしたり、シェルコマンド内で変数展開したりする場合、注意すべきポイントがあります。</p>
+<p>例えば&hellip;</p>
+<ul>
+<li>環境変数を設定するときは、独自のコマンド（<code>%env</code>コマンド）を使う</li>
+<li>環境変数の設定時に Python の変数を利用できる</li>
+<li>Python 変数をシェルコマンド内で使うことができる（しかも記法が2通りある）</li>
+</ul>
+<p>などなど。</p>
+<p>この記事では、素の Python とも UNIX シェルとも違う、Jupyter Notebook 独特の変数操作についてまとめます。</p>
+<h2 id="はじめに---用語の整理">はじめに - 用語の整理</h2>
+<p>Colab やら Jupyter やら、いろいろな用語が出てくるので、ざっくり整理しておきましょう。
+そんなの知ってるわい、って人は読み飛ばしてください。</p>
+<ul>
+<li><strong>Colab</strong>: Python コードを実行できる仮想サーバ。Google が運営。</li>
+<li><strong>Jupyter Notebook</strong>: コードと Markdown テキストをまとめたファイル（ノートブック）を編集できる<strong>Web アプリ</strong></li>
+<li><strong>IPython</strong>: Python シェル (<code>python3</code> コマンドで出てくる対話的なやつ) の高機能版</li>
+</ul>
+<p>IPython を Web UI で操作できるようにしたのが Jupyter Notebook で、それを Google がホスティングしてくれるのが Colab。
+&hellip;と考えれば、この記事を読むうえでは問題ありません。</p>
+<p>記事のなかで「IPython では云々」という説明が登場しますが、これは IPython が裏で動いている Jupyter Notebook や、Jupyter Notebook をベースにしている Colab にも当てはまります。</p>
+<p>細かいことを言えば、Jupyter Notebook のカーネルは Python 以外に R や Julia も選べるんですが、それは今回は考慮しない、ということで&hellip;。</p>
+<h2 id="環境変数を定義するには-env-を使う">環境変数を定義するには <code>%env</code> を使う</h2>
+<p>Jupyter Notebook や Colab を使い始めてしばらく経つと、「環境変数をどうやって定義するのか」という問題が出てきます。</p>
+<p>普通は <code>bash</code> などのUNIXシェルを立ち上げて&hellip;</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">export</span> <span class="nv">MYAPP_SECRET</span><span class="o">=</span>/var/lib/myapp/secret.json
+</span></span></code></pre></div><p>などと定義すればいいのですが、
+ノートブックのセルに書けるのは基本的に Python のコードなので、困るわけです。</p>
+<p><a href="https://ipython.readthedocs.io/en/stable/interactive/reference.html#system-shell-access">IPython のドキュメンテーション</a>を調べると、<code>!ls</code> のように <code>!</code> を先頭につけるとシェルコマンドを実行できる、ということがわかります。
+そうすると、<code>!export my_var=value</code> で環境変数を定義できそうな気がしますが、これは<strong>誤り</strong>。</p>
+<p><a href="https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-env">%env</a> というマジックコマンド（<code>%</code> で始まる IPython の特殊コマンド）を使う必要があります。</p>
+<blockquote>
+<p>👍 環境変数を設定するには <code>%env name=value</code> を使う（引用符は<strong>不要</strong>）<br>
+(<code>%env name value</code> もOK)</p>
+<p>🚫 <code>!export</code> では環境変数をセットできない</p>
+<p>🚫 <code>!name=value</code> でシェル変数をセットすることもできない</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># ✅ 環境変数を定義するには %env を使う</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">my_config</span><span class="o">=/</span><span class="n">content</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">my_config</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># （出力）→ my_config=/content/config.yaml</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ❌ !export はだめ</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">export</span> <span class="n">my_images</span><span class="o">=</span><span class="s2">&#34;/content/train/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">my_images</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → （空）</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ❌ !&lt;name&gt;=&lt;value&gt; もだめ</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">my_json</span><span class="o">=</span><span class="s2">&#34;/content/labels.json&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">env</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">my_json</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → （空）</span>
+</span></span></code></pre></div><p>なぜ <code>!export</code> や <code>!&lt;name&gt;=&lt;value&gt;</code> がダメかというと、<code>!cmd</code> に書いたコマンドは個別のサブシェル内で実行されるためです。</p>
+<p>つまり <code>!export myvar=value</code> と定義しても、<code>export</code> コマンドの実行が終わると同時にサブシェルが終了してしまうので、設定が引き継がれないわけですね。</p>
+<h2 id="変数を使う">変数を使う</h2>
+<p>せっかく定義した変数も、使い方が分からなければ意味がありません。</p>
+<p>というわけで、今度は変数展開について見ていきましょう。</p>
+<h3 id="python-変数展開機能">Python 変数展開機能</h3>
+<p>IPython は、シェルコマンド（<code>!cmd</code>）や <code>%env</code> マジック内で <strong>Python の変数を展開する</strong> という便利機能をもっています。</p>
+<p>書き方は2通りで、<code>$my_var</code> と <code>{my_var}</code> があります。</p>
+<p>&hellip;と説明するよりも、実例を見た方が早いですね。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Python の変数を定義</span>
+</span></span><span class="line"><span class="cl"><span class="n">my_var</span> <span class="o">=</span> <span class="s2">&#34;gs://foo/bar&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># {my_var} や $my_var で展開できる</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;秘密のファイル: </span><span class="si">{my_var}</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → 秘密のファイル: gs://foo/bar</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;秘密のファイル: $my_var&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → 秘密のファイル: gs://foo/bar</span>
+</span></span></code></pre></div><p><code>{my_var}</code> 記法の場合、<code>{my_secret['height']}</code> や <code>{129.3 / 1.293 ** 2}</code> のように式を書くことも可能です。</p>
+<p>（<code>$my_var</code> では複雑な式の評価はできず、変数の展開しかできない）</p>
+<blockquote>
+<p>📔 <strong>シェルコマンドでは、<code>$my_var</code> が環境変数として展開されることもある</strong></p>
+<p><code>$my_var</code> 記法は <code>bash</code> のパラメタ展開と被るじゃん、と思ったあなたは鋭い。</p>
+<p>シェルコマンドでは、<code>my_var</code> が Python 変数と環境変数の両方で定義されている場合、Python 変数が優先されます。</p>
+<p>Python 側で未定義の変数のみ、環境変数として展開されます。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">runtime</span><span class="o">=</span><span class="n">bash</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;$runtime の勝ち&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → bash の勝ち</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">runtime</span> <span class="o">=</span> <span class="s2">&#34;Python&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;$runtime の勝ち&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → Python の勝ち</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># %env を再定義しても Python 変数が優先</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">runtime</span><span class="o">=</span><span class="n">bash</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;$runtime の勝ち&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → Python の勝ち</span>
+</span></span></code></pre></div><p>このように、<code>$my_var</code> 記法は Python 変数と環境変数のどちらなのか見た目ではわからない、という欠点があります。</p>
+<p><code>{my_var}</code> はこのような曖昧さがないので、個人的には <code>{my_var}</code> 記法がオススメです。</p>
+</blockquote>
+<h3 id="シェルコマンドで環境変数にアクセス-my_var">シェルコマンドで環境変数にアクセス: <code>$$MY_VAR</code></h3>
+<p>シェルコマンドで環境変数にアクセスしたい場合、<code>$$PATH</code> のように <code>$</code> をエスケープするとよいです。</p>
+<p>こうすると、たとえ <code>PATH</code> という名前の Python 変数があったとしても、必ず環境変数の <code>PATH</code> が呼び出されます。</p>
+<p>（そんな紛らわしい変数名をつける人がいるのか、という点は置いておいて&hellip;）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">PATH</span> <span class="o">=</span> <span class="s2">&#34;/path/to/my/secret/video.m4a&#34;</span> <span class="c1"># まぎらわしい変数</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ❌ $PATH は Python 変数として展開される場合がある</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="err">$</span><span class="n">PATH</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → /path/to/my/secret/video.m4a</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ✅ $$PATH は必ず環境変数として展開される</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="err">$$</span><span class="n">PATH</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → /opt/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:...</span>
+</span></span></code></pre></div><p>ちなみに、<code>${my_var}</code> のように書くと期待通りに動かないので、避けるのが賢明です。</p>
+<p>（Jupyter が <code>{my_var}</code> を Python 変数として展開した後に、シェルが <code>$my_varの値</code> を展開しようとする、いわゆる「変数名が変数」状態になる）</p>
+<h3 id="env-マジックで環境変数にアクセス-osenvironmy_var"><code>%env</code> マジックで環境変数にアクセス: <code>{os.environ['MY_VAR']}</code></h3>
+<p><code>%env</code> マジック内では動作が少し異なり、 <code>$$PATH</code> も <code>$$SHELL</code> も環境変数としては展開されません。</p>
+<p><code>%env</code> の定義時に環境変数を使いたい場合、 Python の <code>os.environ</code> から取得するのがベストです。</p>
+<p>例えば <code>MYAPP_ROOT</code> という環境変数を参照して <code>MYAPP_LIB</code> を定義したい場合、次のようにするとうまくいきます。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># MYAPP_ROOT の定義</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">MYAPP_ROOT</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my_app</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># MYAPP_LIB の定義</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">MYAPP_LIB</span><span class="o">=</span><span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MYAPP_ROOT&#39;</span><span class="p">]}</span><span class="o">/</span><span class="n">lib</span>
+</span></span></code></pre></div><h3 id="よくあるケース-path-を通す">よくあるケース: <code>PATH</code> を通す</h3>
+<p>この手法を使う典型例が、<code>PATH</code> にディレクトリを追加してコマンドを呼び出しやすくする、というケース。
+いわゆる「<a href="https://linuc.org/study/knowledge/349/">パスを通す</a>」ってやつですね。</p>
+<p><code>bash</code> だと、次のようなコマンドですが&hellip;</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-console" data-lang="console"><span class="line"><span class="cl"><span class="gp">$</span> <span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/path/to/my/bin
+</span></span></code></pre></div><p>Jupyter Notebook でこのコマンドに相当するのが、<code>os.environ['PATH']</code> を使った次の書き方です。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">PATH</span><span class="o">=</span><span class="p">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]}:</span><span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="nb">bin</span>
+</span></span></code></pre></div><h3 id="pythonpath-を変更するときは-syspathappend-を使う"><code>PYTHONPATH</code> を変更するときは <code>sys.path.append()</code> を使う</h3>
+<p>パスつながりで、Python のライブラリ検索時に使う <code>PYTHONPATH</code> についても一言。</p>
+<p><strong><code>PYTHONPATH</code> を <code>%env</code> で再定義しても Jupyter セッションは追加したパスを見てくれません</strong>。</p>
+<p><code>PYTHONPATH</code> は Jupyter Notebook の立ち上げ時に読み出されるためです。</p>
+<p><code>PYTHONPATH</code> にパスを追加するときは、<code>sys.path.append()</code> を使いましょう。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># /content/my_lib に inquisitor モジュールを置く</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">mkdir</span> <span class="o">-</span><span class="n">p</span> <span class="o">/</span><span class="n">content</span><span class="o">/</span><span class="n">my_lib</span>
+</span></span><span class="line"><span class="cl"><span class="n">script</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;def inquisite():
+</span></span></span><span class="line"><span class="cl"><span class="s2">    print(&#39;まさかの時のスペイン宗教裁判！&#39;)&#34;&#34;&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;</span><span class="si">{script}</span><span class="s2">&#34;</span> <span class="o">&gt;</span> <span class="o">/</span><span class="n">content</span><span class="o">/</span><span class="n">my_lib</span><span class="o">/</span><span class="n">inquisitor</span><span class="o">.</span><span class="n">py</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ❌ PYTHONPATH は、Jupyter セッション内で再定義しても意味がない</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">PYTHONPATH</span><span class="o">=/</span><span class="n">content</span><span class="o">/</span><span class="n">my_lib</span><span class="p">:{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PYTHONPATH&#39;</span><span class="p">]}</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">inquisitor</span>
+</span></span><span class="line"><span class="cl"><span class="n">inquisitor</span><span class="o">.</span><span class="n">inquisite</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → ModuleNotFoundError: No module named &#39;inquisitor&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ✅ sys.path.append() を使う</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&#34;/content/my_lib/&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">inquisitor</span>
+</span></span><span class="line"><span class="cl"><span class="n">inquisitor</span><span class="o">.</span><span class="n">inquisite</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → まさかの時のスペイン宗教裁判！</span>
+</span></span></code></pre></div><h3 id="未展開の変数が1つでもあれば展開はされない">未展開の変数が1つでもあれば、展開はされない</h3>
+<p>余談ですが、<strong>展開できない（未定義の）変数が1個でもあれば、同じ行内にあるすべての変数が展開されません</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">superhero</span> <span class="o">=</span> <span class="s2">&#34;バットマン&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="n">villain</span> <span class="o">=</span> <span class="s2">&#34;ジョーカー&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ❌ sidekick が未定義なので、どの変数も展開されない</span>
+</span></span><span class="line"><span class="cl"><span class="err">!</span><span class="n">echo</span> <span class="s2">&#34;</span><span class="si">{superhero}</span><span class="s2"> が </span><span class="si">{sidekick}</span><span class="s2"> の助けを借りて </span><span class="si">{villain}</span><span class="s2"> と戦う物語&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># → {superhero} が {sidekick} の助けを借りて {villain} と戦う物語</span>
+</span></span></code></pre></div><p>「<code>!xargs -I{}</code>」 の <code>{}</code> とか、 「<code># このAPIは高額なので注意 $$$</code>」 というコメントの <code>$$$</code> も対象なので、ご注意を。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>&hellip;という諸々の仕様をまとめたのが、冒頭の表になります。</p>
+<p>せっかくなので再掲しましょう。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Python の変数にアクセス</th>
+<th>環境変数にアクセス</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>シェルコマンド内で</td>
+<td><code>!echo {py_var}</code><br />
+<code>!echo $py_var</code><sup>†</sup>
+</td>
+<td><code>!echo $$PATH</code></td>
+</tr>
+<tr>
+<td><code>%env</code> コマンド内で</td>
+<td><code>%env key={py_var}</code><br />
+<code>%env key=$py_var</code></td>
+<td><code>%env key=<br />
+{os.environ['PATH']}</code></td>
+</tr>
+<tr>
+<td>Python のセル内で</td>
+<td><code>py_var</code></td>
+<td><code>os.environ['PATH']</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>† <strong>個人的には非推奨</strong>。<code>py_var</code> が Python 変数として定義されていない場合、<code>$py_var</code> がシェルの変数と解釈されて、紛らわしいことになる。</p>
+</blockquote>
+<h3 id="path-の設定"><code>PATH</code> の設定</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">os</span>
+</span></span><span class="line"><span class="cl"><span class="o">%</span><span class="n">env</span> <span class="n">PATH</span><span class="o">=/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">my</span><span class="o">/</span><span class="nb">bin</span><span class="p">:{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]}</span>
+</span></span></code></pre></div><h3 id="pythonpath-の設定env-pythonpath-は使わない"><code>PYTHONPATH</code> の設定（<code>%env PYTHONPATH</code> は使わない）</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">sys</span>
+</span></span><span class="line"><span class="cl"><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/path/to/my/pylib&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </section>
+
+    <aside class="w-30-l mt6-l">
+
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    
+<footer class="bg-navy
+    bottom-0 w-100 pa3 flex justify-center" role="contentinfo">
+  <div class="flex justify-between w-100 mw9">
+    <div class="f5 fw4 pv2 ph3 white-70">
+      &copy;  Yuki Sasaki  2023.
+      <a class="hover-white white-70" href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> unless otherwise noted.
+      <a class="hover-white white-70" href="/about">More about license...</a>
+    </div>
+    <div>
+      
+
+<div class="ananke-socials">
+  
+    <a href="https://github.com/yumemio" target="_blank" class="github ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="GitHub link" rel="noopener" aria-label="follow on GitHub——Opens in a new window">
+      
+        <span class="icon"><svg style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+  <path d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+    <a href="https://stackoverflow.com/users/13301046/yumemio" target="_blank" class="stackoverflow ananke-social-link link-transition stackoverflow link dib z-999 mr1" title="Stack Overflow link" rel="noopener" aria-label="follow on Stack Overflow——Opens in a new window">
+      
+        <span class="icon"><svg
+    style="enable-background:new 0 0 67 67;"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    
+>
+    <path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.869 5.903l3.114 4.567-.975.665-3.115-4.567.976-.665zm-2.812 2.585l4.84 2.838-.6 1.017-4.842-2.838.602-1.017zm-1.276 2.724l5.413 1.521-.291 1.077-5.428-1.458.306-1.14zm-.588 2.461l5.687.569-.103 1.12-5.691-.513.107-1.176zm-.169 2.16h5.835v1.167h-5.835v-1.167zm7.976 3.167h-10v-6h1v5h8v-5h1v6zm.195-8.602l-.945-5.446 1.162-.202.947 5.446-1.164.202z"/>
+</svg>
+</span>
+      
+<span class="new-window"><svg  height="8px"  style="enable-background:new 0 0 1000 1000;" version="1.1" viewBox="0 0 1000 1000"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+<path d="M598 128h298v298h-86v-152l-418 418-60-60 418-418h-152v-86zM810 810v-298h86v298c0 46-40 86-86 86h-596c-48 0-86-40-86-86v-596c0-46 38-86 86-86h298v86h-298v596h596z" style="fill-rule:evenodd;clip-rule:evenodd;"/>
+</svg>
+</span></a>
+  
+</div>
+
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>
