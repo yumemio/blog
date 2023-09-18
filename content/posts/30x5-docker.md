@@ -1,9 +1,9 @@
 ---
-title: "[社内勉強会スライド] 30分×5分で学ぶ Docker"
-date: 2023-09-17
+title: "[勉強会スライド] 30分×5分で学ぶ Docker"
+date: 2023-09-18
 draft: false
 
-featured_image: "/images/post/jupyter-variables/hero.jpg"
+featured_image: "/images/post/30x5-docker/hero.png"
 
 ---
 

@@ -9,9 +9,9 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>[社内勉強会スライド] 30分×5分で学ぶ Docker</title>
+      <title>[勉強会スライド] 30分×5分で学ぶ Docker</title>
       <link>https://yumem.io/posts/30x5-docker/</link>
-      <pubDate>Sun, 17 Sep 2023 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 18 Sep 2023 00:00:00 +0000</pubDate>
       
       <guid>https://yumem.io/posts/30x5-docker/</guid>
       <description>TL;DR 私の勤め先で、社内勉強会「30分×5日で学ぶ Docker」を開催したので、スライド資料を公開します。
