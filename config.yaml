@@ -22,6 +22,9 @@ languages:
         weight: 0
 
 markup:
+  goldmark:
+    renderer:
+      unsafe: true
   highlight:
     codeFences: true
     guessSyntax: false
