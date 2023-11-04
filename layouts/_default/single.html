@@ -16,7 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 {{ define "main" }}
   {{ $section := .Site.GetPage "section" .Section }}
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+  <article class="center cf pv2 ph3 ph4-ns mw8">
     <header class="mv4 w-100">
       <aside class="instapaper_ignoref b sans-serif tracked">
         {{ if isset .Params "series" }}
@@ -65,7 +65,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
         "post_content_classes"  | default "sans-serif"}} nested-links {{ $.Param
         "text_color" | default "mid-gray" }} {{ cond (eq
         $.Site.Language.LanguageDirection "rtl") "pl4-l" "pr4-l" }}
-        w-two-thirds-l f5" id="content">
+        f5" id="content">
       {{- .Content -}}
       {{- partial "tags.html" . -}}
       <div class="mt6 instapaper_ignoref">
