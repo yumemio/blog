@@ -9,6 +9,23 @@
     <copyright>Yuki Sasaki</copyright>
     <lastBuildDate>Wed, 16 Nov 2022 11:07:52 +0000</lastBuildDate><atom:link href="https://yumem.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>2023年10〜11月公開の日本語LLM (7B) 3種を横断比較（Youri/CALM2/StableLM-beta）</title>
+      <link>https://yumem.io/posts/japanese-llm-comparison-2023-10/</link>
+      <pubDate>Sat, 04 Nov 2023 00:00:00 +0000</pubDate>
+      
+      <guid>https://yumem.io/posts/japanese-llm-comparison-2023-10/</guid>
+      <description>TL;DR 2023年のハロウィーン前後は怒涛の日本語LLM公開ラッシュでした。 りんなからは「youri-7B」、CyberAgent から「Calm2-7B」、StabilityAI からは「Japanese StableLM Beta/Gamma」が公開されました。
+この記事では、新規公開されたモデルに対してさまざまなプロンプトを投げて、性能を横断比較します。
+今回比較したモデルは次の4つです。 パラメタ数はすべて7Bで、量子化なしのモデルを使っています。
+rinna/youri-7b-chat (PR, HuggingFace) rinna/youri-7b-instruction (HuggingFace) cyberagent/calm2-7b-chat (PR, HuggingFace) stabilityai/japanese-stablelm-instruct-beta (PR, HuggingFace) このほか、参考用に次の2つのモデルにもプロンプトを投げて比較しました。
+GPT-3.5 (API ではなく ChatGPT のほう) GPT-4 (同上) 検証条件 環境 Google Colaboratory Youri-7b-chat は A100 GPU (V100 では OOM）を使用 CALM2 と StableLM は V100 を使用 ハイパーパラメタ top_p: HuggingFace のモデルカードに記載されているコード例のとおり StableLM: 0.95 それ以外: デフォルト値（1.0） temperature: 0.5 と 0.9 の2通り max_new_tokens: 300 なお、GPT-3.5/-4 は ChatGPT 経由で利用しているので、上記のハイパーパラメタは適用していません。
+プロンプト タスクの異なる、下記7つのプロンプトを入力しました。
+クイズ
+キッチンに冷蔵庫があり、その隣のテーブルにバナナが置いてあります。バナナの上に皿を乗せてから、その皿をリビングの上のテーブルに置きました。いまバナナはどこにありますか？
+あなたは大阪市に住んでいます。来週末、あなたは東海道新幹線に乗って、横浜へ旅行に行く予定です。あなたが通過する都道府県を、通過順にすべて答えてください。</description>
+    </item>
+    
+    <item>
       <title>[勉強会スライド] 30分×5分で学ぶ Docker</title>
       <link>https://yumem.io/posts/30x5-docker/</link>
       <pubDate>Mon, 18 Sep 2023 00:00:00 +0000</pubDate>
